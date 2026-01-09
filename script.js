@@ -350,6 +350,33 @@ function showPhase1Results() {
     goToScreen('screen-phase1-results');
 }
 
+function resetPeminatan() {
+    if (!confirm("Reset seluruh peminatan? Semua santri bisa memilih ulang.")) {
+        return;
+    }
+
+    // 1. Reset status santri
+    appData.students.forEach(s => {
+        s.chosen = false;
+    });
+
+    // 2. Kosongkan semua peminatan per jabatan
+    appData.roles.forEach(role => {
+        appData.nominations[role] = [];
+    });
+
+    saveSystemData();
+
+    showCustomModal(
+        "Berhasil",
+        "Peminatan telah direset.",
+        "success",
+        () => {
+            goToScreen('screen-phase1-student-list');
+            renderStudentSelectList();
+        }
+    );
+}
 
 function renderPhase2Dashboard() {
     const list = document.getElementById('list-roles-p2');

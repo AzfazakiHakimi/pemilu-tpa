@@ -109,7 +109,7 @@
 
                 <div class="text-center">
                     <button class="btn-primary" onclick="startPeminatan()">
-                        <i class="fas fa-play"></i>Peminatan
+                        <i class="fas fa-play"></i> Peminatan
                     </button>
                 </div>
             </div>
@@ -156,12 +156,16 @@
     <!-- ================= PEMINATAN : HASIL ================= -->
     <div id="screen-phase1-results" class="screen">
         <div class="screen-inner">
-            <button class="btn-back" onclick="goToScreen('screen-phase1-students')">
+            <button class="btn-back" onclick="goToScreen('screen-phase1-student-list')">
                 <i class="fas fa-arrow-left"></i> Kembali
             </button>
 
             <h2>📊 Data Peminat</h2>
             <div id="list-results-p1" class="list-container"></div>
+
+            <button class="btn-danger mt-20" onclick="resetPeminatan()">
+                <i class="fas fa-redo"></i> Reset Peminatan
+            </button>
         </div>
     </div>
 
@@ -204,7 +208,7 @@
 
                 <div class="action-buttons-row">
                     <button class="btn-primary" onclick="startVotingSession()">
-                        <i class="fas fa-play"></i>Pemilihan
+                        <i class="fas fa-play"></i> Pemilihan
                     </button>
 
                     <button class="btn-secondary-outline" onclick="showFinalResults()">
