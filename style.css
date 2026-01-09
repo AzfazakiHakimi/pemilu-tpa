@@ -56,6 +56,7 @@ html, body {
 
 .screen.active.booth-mode ~ .app-footer {
     display: none;
+    margin-top: 30px;
 }
 
 .bg-shape {
@@ -311,7 +312,6 @@ button {
     color: white;
     padding: 15px 25px;
     border-radius: 12px;
-    width: 100%;
     box-sizing: border-box;
     font-size: 1rem;
 }
@@ -409,6 +409,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 0;
     gap: 8px;
     flex: 1;
 }
@@ -431,7 +432,6 @@ button {
     color: var(--secondary);
     padding: 15px 25px;
     border-radius: 12px;
-    width: 100%;
     box-sizing: border-box;
     font-size: 1rem;
     font-family: var(--font-body);
@@ -511,6 +511,11 @@ button {
     font-family: var(--font-heading); font-size: 2.5rem; margin: 5px 0 30px;
     text-shadow: 2px 2px 0 rgba(0,0,0,0.1); letter-spacing: 2px;
 }
+.role-highlight {
+    color: var(--primary);
+    font-weight: 600;
+}
+
 .voting-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
 .vote-btn {
     background: white; color: var(--text-dark); padding: 20px;

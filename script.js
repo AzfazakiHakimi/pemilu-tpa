@@ -327,7 +327,7 @@ function adminExitVoting() {
 }
 
 function showFinalResults() {
-    document.getElementById("judul-hasil-jabatan").innerText = "Jabatan: " + activeRole;
+    document.getElementById("judul-hasil-jabatan").innerText = activeRole;
     const c = document.getElementById("chart-area");
     c.innerHTML = "";
 
