@@ -145,8 +145,78 @@ header.compact {
     text-align: center;
 }
 
+.color-purple { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
 .color-teal { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
 .color-blue { background: linear-gradient(135deg, #54a0ff, #2e86de); }
+
+#screen-role-manager h3 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: var(--secondary);
+    letter-spacing: 1px;
+}
+
+#input-role-name {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border: 2px solid #dfe6e9;
+    border-radius: 14px;
+    text-align: center;
+    font-family: var(--font-body);
+    outline: none;
+    transition: 0.3s;
+}
+
+#input-role-name:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
+}
+
+#list-roles {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#list-roles li {
+    background: #f1f2f6;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 3px 0 #dfe6e9;
+    transition: 0.2s;
+}
+
+#list-roles li:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+#list-roles li i {
+    font-size: 1rem;
+    color: var(--danger);
+    padding: 6px;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+#list-roles li i:active {
+    background: rgba(255, 118, 117, 0.15);
+}
+
+#list-roles li[style*="justify-content:center"] {
+    background: transparent;
+    box-shadow: none;
+    color: #999;
+    font-weight: 500;
+}
 
 .icon-circle {
     background: rgba(255,255,255,0.2);
@@ -476,6 +546,12 @@ button {
 
 .screen-inner {
     width: 100%;
+}
+
+@media (hover: hover) {
+    #list-roles li:hover {
+        background: #eaeafc;
+    }
 }
 
 @media (max-width: 600px) {
