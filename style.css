@@ -337,7 +337,7 @@ button {
 
 .btn-danger-outline {
     background: white; border: 2px solid var(--danger); color: var(--danger);
-    padding: 10px 20px; border-radius: 50px; font-size: 0.9rem;
+    padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; margin-top: 30px;
 }
 
 .btn-wide {
@@ -547,7 +547,6 @@ button {
     border: none;
     cursor: pointer;
     transition: 0.2s;
-    margin-top: 30px;
 }
 
 .btn-danger:active {
@@ -583,18 +582,25 @@ button {
     display: flex;
     gap: 12px;
     margin-top: 20px;
+    align-items: stretch;
 }
 
 #modal-action-area button {
     flex: 1;
     height: 52px;
     padding: 0 25px;
+    font-weight: 600;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
     border-radius: 12px;
+    margin: 0 !important;
+    line-height: 1;
+}
+
+.modal-box button {
+    margin: 0;
 }
 
 .modal-overlay {
