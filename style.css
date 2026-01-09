@@ -516,7 +516,12 @@ button {
     font-weight: 600;
 }
 
-.voting-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.voting-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
 .vote-btn {
     background: white; color: var(--text-dark); padding: 20px;
     font-size: 1.3rem; border-radius: 15px;
@@ -542,6 +547,7 @@ button {
     border: none;
     cursor: pointer;
     transition: 0.2s;
+    margin-top: 30px;
 }
 
 .btn-danger:active {

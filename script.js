@@ -245,6 +245,28 @@ function setupVotingScreen(role) {
     goToScreen("screen-phase2-setup");
 }
 
+function addCandidateAction() {
+    const input = document.getElementById("input-candidate");
+    const name = input.value.trim();
+
+    if (!name) return;
+
+    const candidates = appData.voting[activeRole].candidates;
+
+    if (candidates.includes(name)) {
+        showModal("Duplikat", "Nama kandidat sudah ada.", "error");
+        return;
+    }
+
+    candidates.push(name);
+    appData.voting[activeRole].votes[name] = 0;
+
+    input.value = "";
+    saveSystemData();
+    renderCandidateList();
+    renderPhase2Dashboard();
+}
+
 function renderCandidateList() {
     const ul = document.getElementById("list-candidates-setup");
     ul.innerHTML = "";
