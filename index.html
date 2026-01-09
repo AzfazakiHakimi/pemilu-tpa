@@ -17,12 +17,9 @@
 <body>
 
 <div class="app-container">
-
-    <!-- Background decoration -->
     <div class="bg-shape shape1"></div>
     <div class="bg-shape shape2"></div>
 
-    <!-- HEADER -->
     <header>
         <div class="logo-box"><i class="fas fa-mosque"></i></div>
         <div class="header-text">
@@ -31,7 +28,6 @@
         </div>
     </header>
 
-    <!-- ================= HOME ================= -->
     <div id="screen-home" class="screen active">
         <div class="screen-inner">
             <div class="menu-container">
@@ -64,7 +60,6 @@
         </div>
     </div>
 
-    <!-- ================= JABATAN ================= -->
     <div id="screen-role-manager" class="screen">
         <div class="screen-inner">
             <button class="btn-back" onclick="goToScreen('screen-home')">
@@ -86,7 +81,6 @@
         </div>
     </div>
 
-    <!-- ================= PEMINATAN : DAFTAR SANTRI ================= -->
     <div id="screen-phase1-students" class="screen">
         <div class="screen-inner">
             <button class="btn-back" onclick="goToScreen('screen-home')">
@@ -108,8 +102,9 @@
                 <hr class="divider">
 
                 <div class="text-center">
-                    <button class="btn-primary" onclick="startPeminatan()">
-                        <i class="fas fa-play"></i> Peminatan
+                    <button class="btn-primary btn-play" onclick="startPeminatan()">
+                        <i class="fas fa-play"></i>
+                        <span>Peminatan</span>
                     </button>
                 </div>
             </div>
@@ -129,15 +124,13 @@
             <hr class="divider">
 
             <div class="action-buttons-row">
-                <button class="btn-secondary-outline btn-wide"
-                    onclick="showPhase1Results()">
-                <i class="fas fa-chart-bar"></i> Lihat Hasil Peminatan
-            </button>
+                <button class="btn-secondary-outline btn-wide" onclick="showPhase1Results()">
+                    <i class="fas fa-chart-bar"></i> Lihat Hasil Peminatan
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- ================= PEMINATAN : PILIH JABATAN ================= -->
     <div id="screen-phase1-choose" class="screen">
         <div class="screen-inner">
             <div class="header-question">
@@ -147,14 +140,12 @@
 
             <div class="grid-roles" id="container-roles-p1"></div>
 
-            <button class="btn-secondary mt-20"
-                onclick="submitPhase1Choice('Tidak Menjabat')">
+            <button class="btn-secondary mt-20" onclick="submitPhase1Choice('Tidak Menjabat')">
                 Saya Tidak Ingin Menjabat
             </button>
         </div>
     </div>
 
-    <!-- ================= PEMINATAN : HASIL ================= -->
     <div id="screen-phase1-results" class="screen">
         <div class="screen-inner">
             <button class="btn-back" onclick="goToScreen('screen-phase1-student-list')">
@@ -170,7 +161,6 @@
         </div>
     </div>
 
-    <!-- ================= PEMILIHAN ================= -->
     <div id="screen-phase2-dashboard" class="screen">
         <div class="screen-inner">
             <button class="btn-back" onclick="goToScreen('screen-home')">
@@ -184,7 +174,6 @@
         </div>
     </div>
 
-    <!-- ================= SETUP VOTING ================= -->
     <div id="screen-phase2-setup" class="screen">
         <div class="screen-inner">
             <button class="btn-back" onclick="goToScreen('screen-phase2-dashboard')">
@@ -208,19 +197,20 @@
                 <hr class="divider">
 
                 <div class="action-buttons-row">
-                    <button class="btn-primary" onclick="startVotingSession()">
-                        <i class="fas fa-play"></i> Pemilihan
+                    <button class="btn-primary btn-play" onclick="startVotingSession()">
+                        <i class="fas fa-play"></i>
+                        <span>Pemilihan</span>
                     </button>
 
-                    <button class="btn-secondary-outline" onclick="showFinalResults()">
-                        <i class="fas fa-chart-bar"></i> Lihat Hasil
+                    <button class="btn-secondary-outline btn-play" onclick="showFinalResults()">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Lihat Hasil</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ================= HASIL VOTING ================= -->
     <div id="screen-voting-result" class="screen">
         <div class="screen-inner">
             <button class="btn-back" onclick="goToScreen('screen-phase2-setup')">
@@ -237,7 +227,6 @@
         </div>
     </div>
 
-    <!-- ================= VOTING BOOTH (DI DALAM CONTAINER) ================= -->
     <div id="screen-voting-booth" class="screen booth-mode">
         <div class="booth-content">
             <p class="booth-subtitle">Silakan Pilih:</p>
@@ -250,29 +239,20 @@
         </button>
     </div>
 
-</div> <!-- END app-container -->
+</div>
 
-<!-- ================= MODAL ================= -->
 <div id="custom-modal" class="modal-overlay">
     <div class="modal-box">
         <div class="modal-icon-circle" id="modal-icon-type"></div>
-        <h3 id="modal-title">Judul</h3>
-        <p id="modal-message">Pesan...</p>
+        <h3 id="modal-title"></h3>
+        <p id="modal-message"></p>
 
-        <!-- INPUT PIN (HANYA UNTUK KONFIRMASI) -->
-        <input type="password"
-           id="modal-pin-input"
-           placeholder="Masukkan PIN Admin"
-           style="display:none; margin-top:15px;" />
-
-    <!-- BUTTON AREA -->
         <div id="modal-action-area">
-            <button class="btn-modal" onclick="closeCustomModal()">OKE</button>
+            <button class="btn-modal" onclick="closeModal()">OKE</button>
         </div>
     </div>
 </div>
 
-<!-- ================= FOOTER ================= -->
 <footer class="app-footer">
     <p>© 2026 • Developed by <span class="footer-author">Azfazaki Hakimi</span></p>
 </footer>

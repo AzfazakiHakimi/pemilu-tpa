@@ -1,487 +1,268 @@
-const ROLES_LIST = [
-    "Ketua", "Wakil", "Sekretaris", "Bendahara", 
-    "Ketertiban", "Kerapian", "Kebersihan", "Perlengkapan"
-];
-
 let appData = {
     roles: [],
-    students: [], 
-    nominations: {}, 
-    voting: {}       
+    students: [],
+    nominations: {},
+    voting: {}
 };
 
-let tempStudentName = "";
-let activeRole = ""; 
-let onModalCloseCallback = null;
+let activeRole = "";
+let activeStudentIndex = null;
+let modalCallback = null;
 
-document.addEventListener('DOMContentLoaded', () => {
-    const booth = document.getElementById('screen-voting-booth');
-    const modal = document.getElementById('custom-modal');
-    
-    if (modal && modal.parentNode !== document.body) {
-        document.body.appendChild(modal);
-    }
-
+document.addEventListener("DOMContentLoaded", () => {
     loadSystemData();
     initDataStructure();
     renderRoleList();
+    renderStudentList();
     renderPhase1RoleButtons();
     renderPhase2Dashboard();
 });
 
 function loadSystemData() {
-    const stored = localStorage.getItem('tpa_election_v8_final');
-    if (stored) {
-        appData = JSON.parse(stored);
-    }
+    const stored = localStorage.getItem("tpa_election_v8_final");
+    if (stored) appData = JSON.parse(stored);
 }
 
 function saveSystemData() {
-    localStorage.setItem('tpa_election_v8_final', JSON.stringify(appData));
+    localStorage.setItem("tpa_election_v8_final", JSON.stringify(appData));
 }
 
 function initDataStructure() {
     appData.roles.forEach(role => {
         if (!appData.nominations[role]) appData.nominations[role] = [];
-        if (!appData.voting[role]) {
-            appData.voting[role] = { candidates: [], votes: {} };
-        }
+        if (!appData.voting[role]) appData.voting[role] = { candidates: [], votes: {} };
     });
 }
 
-function resetSystemData() {
-    localStorage.removeItem('tpa_election_v8_final');
-    location.reload();
-}
-
-function goToScreen(screenId) {
-    document.querySelectorAll('.screen')
-        .forEach(el => el.classList.remove('active'));
-
-    document.getElementById(screenId).classList.add('active');
-
-    if (screenId === 'screen-phase1-student-list') {
-    renderStudentSelectList();
-    }
+function goToScreen(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    if (id === "screen-phase1-student-list") renderStudentSelectList();
 }
 
 function openPeminatan() {
     if (appData.roles.length === 0) {
-        showCustomModal(
-            "Belum Bisa",
-            "Silakan tambahkan jabatan terlebih dahulu.",
-            "error"
-        );
+        showModal("Belum Bisa", "Tambahkan jabatan terlebih dahulu.", "error");
         return;
     }
-
-    goToScreen('screen-phase1-students');
+    goToScreen("screen-phase1-students");
 }
 
 function addRole() {
-    const input = document.getElementById('input-role-name');
+    const input = document.getElementById("input-role-name");
     const role = input.value.trim();
-
-    if (!role) return;
-
-    if (appData.roles.includes(role)) {
-        showCustomModal("Gagal", "Jabatan sudah ada.", "error");
-        return;
-    }
+    if (!role || appData.roles.includes(role)) return;
 
     appData.roles.push(role);
     appData.nominations[role] = [];
     appData.voting[role] = { candidates: [], votes: {} };
 
-    saveSystemData();
     input.value = "";
-
+    saveSystemData();
     renderRoleList();
     renderPhase1RoleButtons();
     renderPhase2Dashboard();
 }
 
 function renderRoleList() {
-    const ul = document.getElementById('list-roles');
+    const ul = document.getElementById("list-roles");
     ul.innerHTML = "";
 
     if (appData.roles.length === 0) {
-        ul.innerHTML = `
-            <li style="color:#999; justify-content:center;">
-                Belum ada jabatan.
-            </li>
-        `;
+        ul.innerHTML = "<li style='color:#999;justify-content:center'>Belum ada jabatan.</li>";
         return;
     }
 
-    appData.roles.forEach((role, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <span>${role}</span>
-            <i class="fas fa-times" onclick="deleteRole(${index})"
-               style="cursor:pointer;color:red"></i>
-        `;
+    appData.roles.forEach((role, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${role}</span><i class="fas fa-times" style="color:red;cursor:pointer" onclick="deleteRole(${i})"></i>`;
         ul.appendChild(li);
     });
 }
 
-function deleteRole(index) {
-    const role = appData.roles[index];
-
-    if (!confirm(`Hapus jabatan ${role}?`)) return;
-
-    appData.roles.splice(index, 1);
-    delete appData.nominations[role];
-    delete appData.voting[role];
-
-    saveSystemData();
-
-    renderRoleList();
-    renderPhase1RoleButtons();
-    renderPhase2Dashboard();
+function deleteRole(i) {
+    showConfirm("Hapus Jabatan", "Jabatan akan dihapus.", () => {
+        const role = appData.roles[i];
+        appData.roles.splice(i, 1);
+        delete appData.nominations[role];
+        delete appData.voting[role];
+        saveSystemData();
+        renderRoleList();
+        renderPhase1RoleButtons();
+        renderPhase2Dashboard();
+        showModal("Berhasil", "Jabatan dihapus.", "success");
+    });
 }
 
 function addStudent() {
-    const input = document.getElementById('input-student-name');
+    const input = document.getElementById("input-student-name");
     const name = input.value.trim();
-
-    if (!name) return;
-
-    if (appData.students.some(s => s.name === name)) {
-        showCustomModal("Gagal", "Nama sudah ada.", "error");
-        return;
-    }
+    if (!name || appData.students.some(s => s.name === name)) return;
 
     appData.students.push({ name, chosen: false });
-    saveSystemData();
     input.value = "";
+    saveSystemData();
     renderStudentList();
 }
 
 function renderStudentList() {
-    const ul = document.getElementById('list-students');
+    const ul = document.getElementById("list-students");
     ul.innerHTML = "";
 
     if (appData.students.length === 0) {
-        ul.innerHTML = `
-            <li style="color:#999; justify-content:center;">
-                Belum ada santri.
-            </li>
-        `;
+        ul.innerHTML = "<li style='color:#999;justify-content:center'>Belum ada santri.</li>";
         return;
     }
 
-    appData.students.forEach((s, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <span>${s.name}</span>
-            <i class="fas fa-times"
-               style="color:red; cursor:pointer"
-               onclick="deleteStudent(${index})"></i>
-        `;
+    appData.students.forEach((s, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${s.name}</span><i class="fas fa-times" style="color:red;cursor:pointer" onclick="deleteStudent(${i})"></i>`;
         ul.appendChild(li);
     });
 }
 
-function deleteStudent(index) {
-    if (!confirm("Hapus santri ini?")) return;
-
-    const name = appData.students[index].name;
-
-    // hapus dari daftar santri
-    appData.students.splice(index, 1);
-
-    // hapus dari semua peminatan (jaga konsistensi)
-    appData.roles.forEach(role => {
-        appData.nominations[role] =
-            appData.nominations[role].filter(n => n !== name);
+function deleteStudent(i) {
+    showConfirm("Hapus Santri", "Santri akan dihapus.", () => {
+        const name = appData.students[i].name;
+        appData.students.splice(i, 1);
+        appData.roles.forEach(r => {
+            appData.nominations[r] = appData.nominations[r].filter(n => n !== name);
+        });
+        saveSystemData();
+        renderStudentList();
+        showModal("Berhasil", "Santri dihapus.", "success");
     });
-
-    saveSystemData();
-    renderStudentList();
-}
-
-let activeStudentIndex = null;
-
-function openStudentChoice(index) {
-    if (appData.roles.length === 0) {
-        showCustomModal(
-            "Belum Bisa",
-            "Belum ada jabatan yang bisa dipilih.",
-            "error"
-        );
-        return;
-    }
-
-    activeStudentIndex = index;
-    const student = appData.students[index];
-    document.getElementById('greet-santri').innerText = `Halo, ${student.name}!`;
-    goToScreen('screen-phase1-choose');
 }
 
 function startPeminatan() {
     if (appData.students.length === 0) {
-        showCustomModal(
-            "Belum Bisa",
-            "Tambahkan santri terlebih dahulu.",
-            "error"
-        );
+        showModal("Belum Bisa", "Tambahkan santri terlebih dahulu.", "error");
         return;
     }
-
-    goToScreen('screen-phase1-student-list');
+    goToScreen("screen-phase1-student-list");
 }
 
 function renderStudentSelectList() {
-    const ul = document.getElementById('list-students-select');
+    const ul = document.getElementById("list-students-select");
     ul.innerHTML = "";
 
-    appData.students.forEach((s, index) => {
-        const li = document.createElement('li');
-
-        li.innerHTML = `
-            <span>${s.name}</span>
-            <span style="font-size:.8rem; color:${s.chosen ? 'green' : '#999'}">
-                ${s.chosen ? '✔ Sudah memilih' : 'Belum memilih'}
-            </span>
-        `;
-
-        if (!s.chosen) {
-            li.style.cursor = "pointer";
-            li.onclick = () => openStudentChoice(index);
-        } else {
-            li.style.opacity = "0.6";
-        }
-
+    appData.students.forEach((s, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${s.name}</span><span style="font-size:.8rem;color:${s.chosen ? 'green' : '#999'}">${s.chosen ? "✔ Sudah memilih" : "Belum memilih"}</span>`;
+        if (!s.chosen) li.onclick = () => openStudentChoice(i);
+        else li.style.opacity = "0.6";
         ul.appendChild(li);
+    });
+}
+
+function openStudentChoice(i) {
+    activeStudentIndex = i;
+    document.getElementById("greet-santri").innerText = `Halo, ${appData.students[i].name}!`;
+    goToScreen("screen-phase1-choose");
+}
+
+function renderPhase1RoleButtons() {
+    const c = document.getElementById("container-roles-p1");
+    c.innerHTML = "";
+    appData.roles.forEach(r => {
+        const b = document.createElement("button");
+        b.className = "role-btn-p1";
+        b.innerText = r;
+        b.onclick = () => submitPhase1Choice(r);
+        c.appendChild(b);
     });
 }
 
 function submitPhase1Choice(role) {
-    const student = appData.students[activeStudentIndex];
-
-    if (role !== 'Tidak Menjabat') {
-        appData.nominations[role].push(student.name);
-    }
-
-    student.chosen = true;
+    const s = appData.students[activeStudentIndex];
+    if (role !== "Tidak Menjabat") appData.nominations[role].push(s.name);
+    s.chosen = true;
     saveSystemData();
-
-    showCustomModal(
-        "Tersimpan",
-        `${student.name} telah memilih.`,
-        "success",
-        () => {
-            goToScreen('screen-phase1-student-list');
-            renderStudentSelectList();
-        }
-    );
-}
-
-function processPhase1Name() {
-    const input = document.getElementById('input-santri-name');
-    const name = input.value.trim();
-    
-    if (!name) {
-        showCustomModal("Ups", "Isi nama dulu!", "error");
-        return;
-    }
-    
-    tempStudentName = name;
-    document.getElementById('greet-santri').innerText = `Halo, ${name}!`;
-    input.value = ""; 
-    goToScreen('screen-phase1-choose');
-}
-
-function renderPhase1RoleButtons() {
-    const container = document.getElementById('container-roles-p1');
-    container.innerHTML = "";
-    
-    appData.roles.forEach(role => {
-        const btn = document.createElement('button');
-        btn.className = 'role-btn-p1';
-        btn.innerHTML = `${role}`;
-        btn.onclick = () => submitPhase1Choice(role);
-        container.appendChild(btn);
+    showModal("Tersimpan", `${s.name} telah memilih.`, "success", () => {
+        goToScreen("screen-phase1-student-list");
+        renderStudentSelectList();
     });
 }
 
 function showPhase1Results() {
-    const list = document.getElementById('list-results-p1');
+    const list = document.getElementById("list-results-p1");
     list.innerHTML = "";
 
-    let totalPeminat = 0;
-
-    appData.roles.forEach(role => {
-        totalPeminat += appData.nominations[role].length;
-    });
-
-    // ✅ JIKA BELUM ADA PEMINAT SAMA SEKALI
-    if (totalPeminat === 0) {
-        list.innerHTML = `
-            <div style="
-                text-align:center;
-                color:#999;
-                padding:20px;
-                font-size:0.95rem;
-            ">
-                Belum ada peminat.
-            </div>
-        `;
-        goToScreen('screen-phase1-results');
+    const total = appData.roles.reduce((a, r) => a + appData.nominations[r].length, 0);
+    if (total === 0) {
+        list.innerHTML = "<div style='text-align:center;color:#999;padding:20px'>Belum ada peminat.</div>";
+        goToScreen("screen-phase1-results");
         return;
     }
 
-    // ✅ JIKA SUDAH ADA PEMINAT
-    appData.roles.forEach(role => {
-        const names = appData.nominations[role].join(", ");
-        const count = appData.nominations[role].length;
-
-        const div = document.createElement('div');
-        div.innerHTML = `
-            <strong>${role} (${count})</strong><br>
-            <small>${names || '-'}</small>
-        `;
-        list.appendChild(div);
+    appData.roles.forEach(r => {
+        const d = document.createElement("div");
+        d.innerHTML = `<strong>${r} (${appData.nominations[r].length})</strong><br><small>${appData.nominations[r].join(", ") || "-"}</small>`;
+        list.appendChild(d);
     });
 
-    goToScreen('screen-phase1-results');
+    goToScreen("screen-phase1-results");
 }
 
 function resetPeminatan() {
-    if (!confirm("Reset seluruh peminatan? Semua santri bisa memilih ulang.")) {
-        return;
-    }
-
-    // 1. Reset status santri
-    appData.students.forEach(s => {
-        s.chosen = false;
+    showConfirm("Reset Peminatan", "Semua santri dapat memilih ulang.", () => {
+        appData.students.forEach(s => s.chosen = false);
+        appData.roles.forEach(r => appData.nominations[r] = []);
+        saveSystemData();
+        showModal("Berhasil", "Peminatan direset.", "success", showPhase1Results);
     });
-
-    // 2. Kosongkan semua peminatan per jabatan
-    appData.roles.forEach(role => {
-        appData.nominations[role] = [];
-    });
-
-    saveSystemData();
-
-    showCustomModal(
-        "Berhasil",
-        "Peminatan telah direset.",
-        "success",
-        () => {
-            showPhase1Results();
-        }
-    );
 }
 
 function renderPhase2Dashboard() {
-    const list = document.getElementById('list-roles-p2');
+    const list = document.getElementById("list-roles-p2");
     list.innerHTML = "";
 
     if (appData.roles.length === 0) {
-        list.innerHTML = `
-            <div style="
-                text-align:center;
-                color:#999;
-                padding:20px;
-                font-size:0.95rem;
-            ">
-                Belum ada jabatan.
-            </div>
-        `;
+        list.innerHTML = "<div style='text-align:center;color:#999;padding:20px'>Belum ada jabatan.</div>";
         return;
     }
 
-    appData.roles.forEach(role => {
-        const div = document.createElement('div');
-        const count =
-            appData.voting[role].candidates.length > 0
-                ? appData.voting[role].candidates.length
-                : (appData.nominations[role]?.length || 0);
-
-        div.innerHTML = `
-            <span>${role}</span>
-            <span style="
-                background:#dfe6e9;
-                padding:5px 10px;
-                border-radius:10px;
-                font-size:0.8rem;
-            ">
-                ${count} Calon
-            </span>
-        `;
-
-        div.onclick = () => setupVotingScreen(role);
-        list.appendChild(div);
+    appData.roles.forEach(r => {
+        const count = appData.voting[r].candidates.length || appData.nominations[r].length;
+        const d = document.createElement("div");
+        d.innerHTML = `<span>${r}</span><span style="background:#dfe6e9;padding:5px 10px;border-radius:10px;font-size:.8rem">${count} Calon</span>`;
+        d.onclick = () => setupVotingScreen(r);
+        list.appendChild(d);
     });
 }
 
 function setupVotingScreen(role) {
-    if (
-        appData.nominations[role] &&
-        appData.nominations[role].length > 0 &&
-        appData.voting[role].candidates.length === 0
-    ) {
-        appData.nominations[role].forEach(name => {
-            appData.voting[role].candidates.push(name);
-            appData.voting[role].votes[name] = 0;
+    if (appData.nominations[role].length && appData.voting[role].candidates.length === 0) {
+        appData.nominations[role].forEach(n => {
+            appData.voting[role].candidates.push(n);
+            appData.voting[role].votes[n] = 0;
         });
-
         saveSystemData();
     }
-
     activeRole = role;
-    
-    const titleEl = document.getElementById('judul-setup-jabatan');
-    if(titleEl) titleEl.innerText = role;
-
+    document.getElementById("judul-setup-jabatan").innerText = role;
     renderCandidateList();
-    goToScreen('screen-phase2-setup');
-}
-
-function addCandidateAction() {
-    const input = document.getElementById('input-candidate');
-    const name = input.value.trim();
-    
-    if(!name) return;
-    
-    if(appData.voting[activeRole].candidates.includes(name)) {
-        showCustomModal("Gagal", "Nama sudah ada.", "error");
-        return;
-    }
-
-    appData.voting[activeRole].candidates.push(name);
-    if(appData.voting[activeRole].votes[name] === undefined) {
-        appData.voting[activeRole].votes[name] = 0;
-    }
-    
-    saveSystemData();
-    input.value = "";
-    renderCandidateList();
-    renderPhase2Dashboard();
+    goToScreen("screen-phase2-setup");
 }
 
 function renderCandidateList() {
-    const ul = document.getElementById('list-candidates-setup');
+    const ul = document.getElementById("list-candidates-setup");
     ul.innerHTML = "";
-    const candidates = appData.voting[activeRole].candidates;
-    
-    if(candidates.length === 0) {
-        ul.innerHTML = "<li style='color:#999; justify-content:center'>Belum ada kandidat.</li>";
+    const c = appData.voting[activeRole].candidates;
+    if (!c.length) {
+        ul.innerHTML = "<li style='color:#999;justify-content:center'>Belum ada kandidat.</li>";
         return;
     }
-
-    candidates.forEach((name, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span>${name}</span> <i class="fas fa-times" style="color:red; cursor:pointer;" onclick="deleteCandidate(${index})"></i>`;
+    c.forEach((n, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${n}</span><i class="fas fa-times" style="color:red;cursor:pointer" onclick="deleteCandidate(${i})"></i>`;
         ul.appendChild(li);
     });
 }
 
-function deleteCandidate(index) {
-    const name = appData.voting[activeRole].candidates[index];
-    appData.voting[activeRole].candidates.splice(index, 1);
+function deleteCandidate(i) {
+    const name = appData.voting[activeRole].candidates[i];
+    appData.voting[activeRole].candidates.splice(i, 1);
     delete appData.voting[activeRole].votes[name];
     saveSystemData();
     renderCandidateList();
@@ -489,212 +270,118 @@ function deleteCandidate(index) {
 }
 
 function startVotingSession() {
-    const candidates = appData.voting[activeRole].candidates;
-    
-    if(candidates.length < 1) {
-        showCustomModal("Ups", "Minimal 1 kandidat!", "error");
+    if (!appData.voting[activeRole].candidates.length) {
+        showModal("Ups", "Minimal 1 kandidat.", "error");
         return;
     }
-
-    document.getElementById('judul-bilik-suara').innerText = activeRole.toUpperCase();
-    
+    document.getElementById("judul-bilik-suara").innerText = activeRole.toUpperCase();
     renderVotingButtons();
-    goToScreen('screen-voting-booth');
+    goToScreen("screen-voting-booth");
 }
 
 function renderVotingButtons() {
-    const container = document.getElementById('container-voting-buttons');
-    container.innerHTML = "";
-    const candidates = appData.voting[activeRole].candidates;
-
-    candidates.forEach(name => {
-        const btn = document.createElement('button');
-        btn.className = 'vote-btn';
-        btn.innerText = name;
-        
-        btn.onclick = function() {
-            castVote(name);
-        };
-        
-        container.appendChild(btn);
+    const c = document.getElementById("container-voting-buttons");
+    c.innerHTML = "";
+    appData.voting[activeRole].candidates.forEach(n => {
+        const b = document.createElement("button");
+        b.className = "vote-btn";
+        b.innerText = n;
+        b.onclick = () => castVote(n);
+        c.appendChild(b);
     });
 }
 
 let voteLocked = false;
 
 function castVote(name) {
-    if(voteLocked) return;
+    if (voteLocked) return;
     voteLocked = true;
 
     appData.voting[activeRole].votes[name]++;
     saveSystemData();
 
-    setTimeout(() => voteLocked = false, 3000);
-
-    showCustomModal("Suara Masuk!", `Pilihan untuk ${name} dicatat.`, "success");
-}
-
-function adminExitVoting() {
-    const pass = prompt("PIN Admin:", "");
-    if(pass === "1234") {
-        showFinalResults();
-    } else if (pass !== null) {
-        alert("PIN Salah!");
-    }
+    showModal(
+        "Suara Masuk",
+        `Pilihan untuk ${name} dicatat.`,
+        "success",
+        () => voteLocked = false
+    );
 }
 
 function showFinalResults() {
-    document.getElementById('judul-hasil-jabatan').innerText = "Jabatan: " + activeRole;
-    
-    const container = document.getElementById('chart-area');
-    container.innerHTML = "";
-    
-    const data = appData.voting[activeRole];
-    let total = 0;
-    
-    for(let key in data.votes) total += data.votes[key];
-    
-    const sorted = Object.keys(data.votes).sort((a,b) => data.votes[b] - data.votes[a]);
+    document.getElementById("judul-hasil-jabatan").innerText = "Jabatan: " + activeRole;
+    const c = document.getElementById("chart-area");
+    c.innerHTML = "";
 
-    if(total === 0 && sorted.length === 0) {
-        container.innerHTML = "<p style='text-align:center'>Belum ada suara.</p>";
+    const v = appData.voting[activeRole].votes;
+    const total = Object.values(v).reduce((a, b) => a + b, 0);
+
+    if (!total) {
+        c.innerHTML = "<p style='text-align:center'>Belum ada suara.</p>";
     } else {
-        sorted.forEach(name => {
-            const votes = data.votes[name];
-            const pct = total === 0 ? 0 : Math.round((votes/total)*100);
-            
-            const div = document.createElement('div');
-            div.className = "bar-item";
-            div.innerHTML = `
-                <div class="bar-label">
-                    <span>${name}</span> 
-                    <span>${votes} Suara (${pct}%)</span>
-                </div>
-                <div class="bar-bg">
-                    <div class="bar-fill" style="width:${pct}%"></div>
+        Object.keys(v).sort((a, b) => v[b] - v[a]).forEach(n => {
+            const p = Math.round((v[n] / total) * 100);
+            c.innerHTML += `
+                <div class="bar-item">
+                    <div class="bar-label"><span>${n}</span><span>${v[n]} Suara (${p}%)</span></div>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${p}%"></div></div>
                 </div>
             `;
-            container.appendChild(div);
         });
     }
-    
-    goToScreen('screen-voting-result');
+
+    goToScreen("screen-voting-result");
 }
 
 function resetVotingForRole() {
-    showConfirmResetModal(
-        "Reset Suara",
-        `Reset seluruh suara untuk jabatan ${activeRole}?`,
-        () => {
-            appData.voting[activeRole].candidates.forEach(name => {
-                appData.voting[activeRole].votes[name] = 0;
-            });
-
-            saveSystemData();
-            showFinalResults();
-
-            showCustomModal(
-                "Berhasil",
-                `Suara jabatan ${activeRole} berhasil direset.`,
-                "success"
-            );
-        }
-    );
-}
-
-function showCustomModal(title, msg, type, callback) {
-    document.getElementById('modal-title').innerText = title;
-    document.getElementById('modal-message').innerText = msg;
-    const icon = document.getElementById('modal-icon-type');
-    
-    if(type === 'success') {
-        icon.style.background = '#55efc4';
-        icon.innerHTML = '<i class="fas fa-check"></i>';
-    } else if (type === 'error') {
-        icon.style.background = '#ff7675';
-        icon.innerHTML = '<i class="fas fa-times"></i>';
-    }
-    
-    onModalCloseCallback = callback;
-    
-    const modal = document.getElementById('custom-modal');
-    modal.style.zIndex = "99999999"; 
-    modal.classList.add('show');
-}
-
-function closeCustomModal() {
-    document.getElementById('custom-modal').classList.remove('show');
-    if(onModalCloseCallback) {
-        onModalCloseCallback();
-        onModalCloseCallback = null;
-    }
-}
-
-function showConfirmResetModal(title, message, onConfirm) {
-    document.getElementById('modal-title').innerText = title;
-    document.getElementById('modal-message').innerText = message;
-
-    const icon = document.getElementById('modal-icon-type');
-    icon.style.background = '#ff7675';
-    icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-
-    const pinInput = document.getElementById('modal-pin-input');
-    pinInput.value = "";
-    pinInput.style.display = "block";
-
-    const actionArea = document.getElementById('modal-action-area');
-    actionArea.innerHTML = `
-        <button class="btn-secondary-outline" onclick="closeCustomModal()">Batal</button>
-        <button class="btn-danger" onclick="confirmResetWithPin()">Reset</button>
-    `;
-
-    window._resetConfirmCallback = onConfirm;
-
-    document.getElementById('custom-modal').classList.add('show');
-}
-
-function confirmResetWithPin() {
-    const pin = document.getElementById('modal-pin-input').value;
-
-    if (pin !== "1234") {
-        showCustomModal(
-            "Gagal",
-            "PIN Admin salah.",
-            "error"
-        );
-        return;
-    }
-
-    closeCustomModal();
-
-    if (window._resetConfirmCallback) {
-        window._resetConfirmCallback();
-        window._resetConfirmCallback = null;
-    }
-}
-
-function adminResetData() {
-    const pass = prompt("PIN Admin:");
-    if (pass === "1234") {
-        resetSystemData();
-    } else if (pass !== null) {
-        alert("PIN salah!");
-    }
+    showConfirm("Reset Suara", "Semua suara akan dihapus.", () => {
+        appData.voting[activeRole].candidates.forEach(n => appData.voting[activeRole].votes[n] = 0);
+        saveSystemData();
+        showModal("Berhasil", "Suara berhasil direset.", "success", showFinalResults);
+    });
 }
 
 function confirmResetSystem() {
-    showConfirmResetModal(
-        "Reset Data",
-        "Semua data akan dihapus. Lanjutkan?",
-        () => {
-            localStorage.removeItem('tpa_election_v8_final');
+    showConfirm("Reset Data", "Semua data akan dihapus.", () => {
+        localStorage.removeItem("tpa_election_v8_final");
+        showModal("Berhasil", "Semua data direset.", "success", () => location.reload());
+    });
+}
 
-            showCustomModal(
-                "Berhasil",
-                "Semua data berhasil direset.",
-                "success",
-                () => location.reload()
-            );
-        }
-    );
+function showModal(title, message, type, cb) {
+    document.getElementById("modal-title").innerText = title;
+    document.getElementById("modal-message").innerText = message;
+    const i = document.getElementById("modal-icon-type");
+    i.style.background = type === "success" ? "#55efc4" : "#ff7675";
+    i.innerHTML = type === "success" ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';
+    modalCallback = cb || null;
+    document.getElementById("modal-action-area").innerHTML =
+        `<button class="btn-modal" onclick="closeModal()">OKE</button>`;
+    document.getElementById("custom-modal").classList.add("show");
+}
+
+function showConfirm(title, message, onYes) {
+    document.getElementById("modal-title").innerText = title;
+    document.getElementById("modal-message").innerText = message;
+    const i = document.getElementById("modal-icon-type");
+    i.style.background = "#ff7675";
+    i.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+    modalCallback = onYes;
+    document.getElementById("modal-action-area").innerHTML = `
+        <button class="btn-secondary-outline btn-modal-cancel" onclick="closeModal()">Batal</button>
+        <button class="btn-danger" onclick="confirmModal()">Ya</button>
+    `;
+    document.getElementById("custom-modal").classList.add("show");
+}
+
+function confirmModal() {
+    const cb = modalCallback;
+    modalCallback = null;
+    document.getElementById("custom-modal").classList.remove("show");
+    setTimeout(() => cb && cb(), 200);
+}
+
+function closeModal() {
+    document.getElementById("custom-modal").classList.remove("show");
+    modalCallback = null;
 }
