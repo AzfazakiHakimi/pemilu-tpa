@@ -57,16 +57,14 @@ function resetSystemData() {
 }
 
 function goToScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-
-    const header = document.querySelector('header');
-    if(screenId !== 'screen-home') {
-        header.classList.add('compact');
-    } else {
-        header.classList.remove('compact');
-    }
+    document.querySelectorAll('.screen')
+        .forEach(el => el.classList.remove('active'));
 
     document.getElementById(screenId).classList.add('active');
+
+    if (screenId === 'screen-phase1-students') {
+        renderStudentList();
+    }
 }
 
 function addRole() {
@@ -262,6 +260,19 @@ function renderPhase2Dashboard() {
 }
 
 function setupVotingScreen(role) {
+    if (
+        appData.nominations[role] &&
+        appData.nominations[role].length > 0 &&
+        appData.voting[role].candidates.length === 0
+    ) {
+        appData.nominations[role].forEach(name => {
+            appData.voting[role].candidates.push(name);
+            appData.voting[role].votes[name] = 0;
+        });
+
+        saveSystemData();
+    }
+
     activeRole = role;
     
     const titleEl = document.getElementById('judul-setup-jabatan');
@@ -447,5 +458,14 @@ function closeCustomModal() {
     if(onModalCloseCallback) {
         onModalCloseCallback();
         onModalCloseCallback = null;
+    }
+}
+
+function adminResetData() {
+    const pass = prompt("PIN Admin:");
+    if (pass === "1234") {
+        resetSystemData();
+    } else if (pass !== null) {
+        alert("PIN salah!");
     }
 }
