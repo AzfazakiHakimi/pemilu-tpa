@@ -5,6 +5,7 @@ const ROLES_LIST = [
 
 let appData = {
     roles: [],
+    students: [], 
     nominations: {}, 
     voting: {}       
 };
@@ -130,6 +131,83 @@ function deleteRole(index) {
     renderPhase2Dashboard();
 }
 
+function addStudent() {
+    const input = document.getElementById('input-student-name');
+    const name = input.value.trim();
+
+    if (!name) return;
+
+    if (appData.students.some(s => s.name === name)) {
+        showCustomModal("Gagal", "Nama sudah ada.", "error");
+        return;
+    }
+
+    appData.students.push({ name, chosen: false });
+    saveSystemData();
+    input.value = "";
+    renderStudentList();
+}
+
+function renderStudentList() {
+    const ul = document.getElementById('list-students');
+    ul.innerHTML = "";
+
+    if (appData.students.length === 0) {
+        ul.innerHTML = "<li style registering'>Belum ada santri</li>";
+        return;
+    }
+
+    appData.students.forEach((s, index) => {
+        const li = document.createElement('li');
+
+        li.innerHTML = `
+            <span>${s.name}</span>
+            <span style="font-size:.8rem; color:${s.chosen ? 'green' : '#999'}">
+                ${s.chosen ? '✔ Sudah memilih' : 'Belum memilih'}
+            </span>
+        `;
+
+        if (!s.chosen) {
+            li.onclick = () => openStudentChoice(index);
+            li.style.cursor = "pointer";
+        } else {
+            li.style.opacity = "0.6";
+        }
+
+        ul.appendChild(li);
+    });
+}
+
+let activeStudentIndex = null;
+
+function openStudentChoice(index) {
+    activeStudentIndex = index;
+    const student = appData.students[index];
+    document.getElementById('greet-santri').innerText = `Halo, ${student.name}!`;
+    goToScreen('screen-phase1-choose');
+}
+
+function submitPhase1Choice(role) {
+    const student = appData.students[activeStudentIndex];
+
+    if (role !== 'Tidak Menjabat') {
+        appData.nominations[role].push(student.name);
+    }
+
+    student.chosen = true;
+    saveSystemData();
+
+    showCustomModal(
+        "Tersimpan",
+        `${student.name} telah memilih.`,
+        "success",
+        () => {
+            goToScreen('screen-phase1-students');
+            renderStudentList();
+        }
+    );
+}
+
 function processPhase1Name() {
     const input = document.getElementById('input-santri-name');
     const name = input.value.trim();
@@ -155,16 +233,6 @@ function renderPhase1RoleButtons() {
         btn.innerHTML = `${role}`;
         btn.onclick = () => submitPhase1Choice(role);
         container.appendChild(btn);
-    });
-}
-
-function submitPhase1Choice(role) {
-    if (role !== 'Tidak Menjabat') {
-        appData.nominations[role].push(tempStudentName);
-    }
-    saveSystemData();
-    showCustomModal("Sukses", `Pilihan ${tempStudentName} tersimpan.`, "success", () => {
-        goToScreen('screen-phase1-input');
     });
 }
 

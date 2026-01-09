@@ -33,10 +33,25 @@
                             <p>Atur jabatan pemilihan</p>
                         </div>
 
-                        <div class="menu-card color-teal" onclick="goToScreen('screen-phase1-input')">
-                            <div class="icon-circle"><i class="fas fa-user-check"></i></div>
-                            <h2>Peminatan</h2>
-                            <p>Santri memilih jabatan</p>
+                        <div id="screen-phase1-students" class="screen">
+                            <div class="screen-inner">
+                                <button class="btn-back" onclick="goToScreen('screen-home')">
+                                    <i class="fas fa-arrow-left"></i> Kembali
+                                </button>
+
+                                <div class="content-box">
+                                    <h3>Daftar Santri</h3>
+
+                                    <div class="add-candidate-row">
+                                        <input type="text" id="input-student-name" placeholder="Nama Santri">
+                                        <button class="btn-icon" onclick="addStudent()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                        </div>
+
+                                    <ul id="list-students" class="candidate-ul"></ul>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="menu-card color-blue" onclick="goToScreen('screen-phase2-dashboard')">
