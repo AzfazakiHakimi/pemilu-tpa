@@ -1,229 +1,233 @@
 <!DOCTYPE html>
 <html lang="id">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Pemilu TPA Al Mujahidin Dolo</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemilu TPA Al Mujahidin Dolo</title>
 
-    <body>
-        <div class="app-container">
-            <div class="bg-shape shape1"></div>
-            <div class="bg-shape shape2"></div>
+    <link rel="stylesheet" href="style.css">
 
-            <header>
-                <div class="logo-box"><i class="fas fa-mosque"></i></div>
-                <div class="header-text">
-                    <h1>Pemilu</h1>
-                    <p>TPA Al Mujahidin Dolo</p>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- Background decoration -->
+    <div class="bg-shape shape1"></div>
+    <div class="bg-shape shape2"></div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo-box"><i class="fas fa-mosque"></i></div>
+        <div class="header-text">
+            <h1>Pemilu</h1>
+            <p>TPA Al Mujahidin Dolo</p>
+        </div>
+    </header>
+
+    <!-- ================= HOME ================= -->
+    <div id="screen-home" class="screen active">
+        <div class="screen-inner">
+            <div class="menu-container">
+
+                <div class="menu-card color-purple" onclick="goToScreen('screen-role-manager')">
+                    <div class="icon-circle"><i class="fas fa-briefcase"></i></div>
+                    <h2>Jabatan</h2>
+                    <p>Atur jabatan pemilihan</p>
                 </div>
-            </header>
 
-            <div id="screen-home" class="screen active">
-                <div class="screen-inner">
-                    <div class="menu-container">
-                        <div class="menu-card color-purple" onclick="goToScreen('screen-role-manager')">
-                            <div class="icon-circle"><i class="fas fa-briefcase"></i></div>
-                            <h2>Jabatan</h2>
-                            <p>Atur jabatan pemilihan</p>
-                        </div>
-
-                        <div id="screen-phase1-students" class="screen">
-                            <div class="screen-inner">
-                                <button class="btn-back" onclick="goToScreen('screen-home')">
-                                    <i class="fas fa-arrow-left"></i> Kembali
-                                </button>
-
-                                <div class="content-box">
-                                    <h3>Daftar Santri</h3>
-
-                                    <div class="add-candidate-row">
-                                        <input type="text" id="input-student-name" placeholder="Nama Santri">
-                                        <button class="btn-icon" onclick="addStudent()">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        </div>
-
-                                    <ul id="list-students" class="candidate-ul"></ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="menu-card color-blue" onclick="goToScreen('screen-phase2-dashboard')">
-                            <div class="icon-circle"><i class="fas fa-vote-yea"></i></div>
-                            <h2>Pemilihan</h2>
-                            <p>Voting kandidat final</p>
-                        </div>
-                    </div>
-
-                    <div class="footer-area text-center">
-                        <button class="btn-danger-outline" onclick="resetSystemData()">
-                            <i class="fas fa-trash-alt"></i> Reset Data
-                        </button>
-                    </div>
+                <div class="menu-card color-teal" onclick="goToScreen('screen-phase1-students')">
+                    <div class="icon-circle"><i class="fas fa-user-check"></i></div>
+                    <h2>Peminatan</h2>
+                    <p>Santri memilih jabatan</p>
                 </div>
-            </div>
 
-            <div id="screen-role-manager" class="screen">
-                <div class="screen-inner">
-                    <button class="btn-back" onclick="goToScreen('screen-home')">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </button>
-
-                    <div class="content-box">
-                        <h3>Kelola Jabatan</h3>
-
-                        <div class="add-candidate-row">
-                            <input type="text" id="input-role-name" placeholder="Nama Jabatan">
-                            <button class="btn-icon" onclick="addRole()">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-
-                        <ul id="list-roles" class="candidate-ul"></ul>
-                    </div>
+                <div class="menu-card color-blue" onclick="goToScreen('screen-phase2-dashboard')">
+                    <div class="icon-circle"><i class="fas fa-vote-yea"></i></div>
+                    <h2>Pemilihan</h2>
+                    <p>Voting kandidat final</p>
                 </div>
-            </div>
 
-            <div id="screen-phase1-input" class="screen">
-                <div class="screen-inner">
-                    <button class="btn-back" onclick="goToScreen('screen-home')">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </button>
-
-                    <div class="content-box">
-                        <div class="illustration"><i class="fas fa-child"></i></div>
-                        <h2>Siapa Namamu?</h2>
-                        <div class="input-wrapper">
-                            <input type="text" id="input-santri-name" placeholder="Tulis nama panggilan..." autocomplete="off">
-                        </div>
-                        <button class="btn-primary" onclick="processPhase1Name()">
-                            Lanjut <i class="fas fa-arrow-right"></i>
-                        </button>
-                    </div>
-
-                    <div class="text-center mt-20">
-                        <button class="btn-pill-purple" onclick="showPhase1Results()">
-                            <i class="fas fa-clipboard-list"></i> Lihat Hasil Peminat
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="screen-phase1-choose" class="screen">
-                <div class="screen-inner">
-                    <div class="header-question">
-                        <h2 id="greet-santri">Halo!</h2>
-                        <p>Ingin menjabat sebagai apa?</p>
-                    </div>
-
-                    <div class="grid-roles" id="container-roles-p1"></div>
-
-                    <button class="btn-secondary mt-20" onclick="submitPhase1Choice('Tidak Menjabat')">
-                        Saya Tidak Ingin Menjabat
-                    </button>
-                </div>
-            </div>
-
-            <div id="screen-phase1-results" class="screen">
-                <div class="screen-inner">
-                    <button class="btn-back" onclick="goToScreen('screen-phase1-students')">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </button>
-
-                    <h2>📊 Data Peminat</h2>
-                    <div id="list-results-p1" class="list-container"></div>
-                </div>
-            </div>
-
-            <div id="screen-phase2-dashboard" class="screen">
-                <div class="screen-inner">
-                    <button class="btn-back" onclick="goToScreen('screen-home')">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </button>
-
-                    <h2>🗳️ Kotak Suara</h2>
-                    <p>Pilih jabatan untuk divoting:</p>
-                    <div id="list-roles-p2" class="role-list-vertical"></div>
-                </div>
-            </div>
-
-            <div id="screen-phase2-setup" class="screen">
-                <div class="screen-inner">
-                    <button class="btn-back" onclick="goToScreen('screen-phase2-dashboard')">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </button>
-
-                    <div class="content-box">
-                        <h3 class="box-title">
-                            Setup: <span id="judul-setup-jabatan" style="color:var(--primary)">...</span>
-                        </h3>
-
-                        <div class="add-candidate-row">
-                            <input type="text" id="input-candidate" placeholder="Nama Kandidat Final">
-                            <button class="btn-icon" onclick="addCandidateAction()">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                        </div>
-
-                        <ul id="list-candidates-setup" class="candidate-ul"></ul>
-
-                        <hr class="divider">
-
-                        <div class="action-buttons-row">
-                            <button class="btn-primary" onclick="startVotingSession()">
-                                <i class="fas fa-play"></i> Mulai Voting
-                            </button>
-                            <button class="btn-secondary-outline" onclick="showFinalResults()">
-                                <i class="fas fa-chart-bar"></i> Lihat Hasil
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="screen-voting-result" class="screen">
-                <div class="screen-inner">
-                    <button class="btn-back" onclick="goToScreen('screen-phase2-setup')">
-                        <i class="fas fa-arrow-left"></i> Kembali
-                    </button>
-
-                    <h2 class="result-header">🏆 Hasil Suara</h2>
-                    <h3 id="judul-hasil-jabatan" class="text-highlight">...</h3>
-                    <div id="chart-area" class="chart-wrapper"></div>
-
-                    <button class="btn-danger" onclick="resetVotingForRole()">
-                        <i class="fas fa-redo"></i> Reset Suara
-                    </button>
-                </div>
             </div>
         </div>
+    </div>
 
-        <div id="screen-voting-booth" class="screen booth-mode">
-            <div class="booth-content">
-                <p class="booth-subtitle">Silakan Pilih:</p>
-                <h1 id="judul-bilik-suara">JABATAN</h1>
-                <div id="container-voting-buttons" class="voting-grid"></div>
+    <!-- ================= JABATAN ================= -->
+    <div id="screen-role-manager" class="screen">
+        <div class="screen-inner">
+            <button class="btn-back" onclick="goToScreen('screen-home')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+
+            <div class="content-box">
+                <h3>Kelola Jabatan</h3>
+
+                <div class="add-candidate-row">
+                    <input type="text" id="input-role-name" placeholder="Nama Jabatan">
+                    <button class="btn-icon" onclick="addRole()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <ul id="list-roles" class="candidate-ul"></ul>
             </div>
-            <button class="btn-admin-lock" onclick="adminExitVoting()">
-            <i class="fas fa-lock"></i> Selesai
+        </div>
+    </div>
+
+    <!-- ================= PEMINATAN : DAFTAR SANTRI ================= -->
+    <div id="screen-phase1-students" class="screen">
+        <div class="screen-inner">
+            <button class="btn-back" onclick="goToScreen('screen-home')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+
+            <div class="content-box">
+                <h3>Daftar Santri</h3>
+
+                <div class="add-candidate-row">
+                    <input type="text" id="input-student-name" placeholder="Nama Santri">
+                    <button class="btn-icon" onclick="addStudent()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <ul id="list-students" class="candidate-ul"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PEMINATAN : PILIH JABATAN ================= -->
+    <div id="screen-phase1-choose" class="screen">
+        <div class="screen-inner">
+            <div class="header-question">
+                <h2 id="greet-santri">Halo!</h2>
+                <p>Ingin menjabat sebagai apa?</p>
+            </div>
+
+            <div class="grid-roles" id="container-roles-p1"></div>
+
+            <button class="btn-secondary mt-20"
+                onclick="submitPhase1Choice('Tidak Menjabat')">
+                Saya Tidak Ingin Menjabat
             </button>
         </div>
+    </div>
 
-        <div id="custom-modal" class="modal-overlay">
-            <div class="modal-box">
-                <div class="modal-icon-circle" id="modal-icon-type"></div>
-                <h3 id="modal-title">Judul</h3>
-                <p id="modal-message">Pesan...</p>
-                <button class="btn-modal" onclick="closeCustomModal()">OKE</button>
+    <!-- ================= PEMINATAN : HASIL ================= -->
+    <div id="screen-phase1-results" class="screen">
+        <div class="screen-inner">
+            <button class="btn-back" onclick="goToScreen('screen-phase1-students')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+
+            <h2>📊 Data Peminat</h2>
+            <div id="list-results-p1" class="list-container"></div>
+        </div>
+    </div>
+
+    <!-- ================= PEMILIHAN ================= -->
+    <div id="screen-phase2-dashboard" class="screen">
+        <div class="screen-inner">
+            <button class="btn-back" onclick="goToScreen('screen-home')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+
+            <h2>🗳️ Kotak Suara</h2>
+            <p>Pilih jabatan untuk divoting:</p>
+
+            <div id="list-roles-p2" class="role-list-vertical"></div>
+        </div>
+    </div>
+
+    <!-- ================= SETUP VOTING ================= -->
+    <div id="screen-phase2-setup" class="screen">
+        <div class="screen-inner">
+            <button class="btn-back" onclick="goToScreen('screen-phase2-dashboard')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+
+            <div class="content-box">
+                <h3 class="box-title">
+                    Setup: <span id="judul-setup-jabatan" style="color:var(--primary)">...</span>
+                </h3>
+
+                <div class="add-candidate-row">
+                    <input type="text" id="input-candidate" placeholder="Nama Kandidat Final">
+                    <button class="btn-icon" onclick="addCandidateAction()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+
+                <ul id="list-candidates-setup" class="candidate-ul"></ul>
+
+                <hr class="divider">
+
+                <div class="action-buttons-row">
+                    <button class="btn-primary" onclick="startVotingSession()">
+                        <i class="fas fa-play"></i> Mulai Voting
+                    </button>
+
+                    <button class="btn-secondary-outline" onclick="showFinalResults()">
+                        <i class="fas fa-chart-bar"></i> Lihat Hasil
+                    </button>
+                </div>
             </div>
         </div>
+    </div>
 
-        <script src="script.js"></script>
-    </body>
+    <!-- ================= HASIL VOTING ================= -->
+    <div id="screen-voting-result" class="screen">
+        <div class="screen-inner">
+            <button class="btn-back" onclick="goToScreen('screen-phase2-setup')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+
+            <h2 class="result-header">🏆 Hasil Suara</h2>
+            <h3 id="judul-hasil-jabatan" class="text-highlight">...</h3>
+            <div id="chart-area" class="chart-wrapper"></div>
+
+            <button class="btn-danger" onclick="resetVotingForRole()">
+                <i class="fas fa-redo"></i> Reset Suara
+            </button>
+        </div>
+    </div>
+
+    <!-- ================= VOTING BOOTH (DI DALAM CONTAINER) ================= -->
+    <div id="screen-voting-booth" class="screen booth-mode">
+        <div class="booth-content">
+            <p class="booth-subtitle">Silakan Pilih:</p>
+            <h1 id="judul-bilik-suara">JABATAN</h1>
+            <div id="container-voting-buttons" class="voting-grid"></div>
+        </div>
+
+        <button class="btn-admin-lock" onclick="adminExitVoting()">
+            <i class="fas fa-lock"></i> Selesai
+        </button>
+    </div>
+
+</div> <!-- END app-container -->
+
+<!-- ================= MODAL ================= -->
+<div id="custom-modal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-icon-circle" id="modal-icon-type"></div>
+        <h3 id="modal-title">Judul</h3>
+        <p id="modal-message">Pesan...</p>
+        <button class="btn-modal" onclick="closeCustomModal()">OKE</button>
+    </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="app-footer">
+    <p>© 2026 • TPA Al Mujahidin Dolo • Developed by <span class="footer-author">Azfazaki Hakimi</span></p>
+</footer>
+
+<script src="script.js"></script>
+</body>
 </html>

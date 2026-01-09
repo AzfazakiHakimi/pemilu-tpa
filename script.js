@@ -18,9 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const booth = document.getElementById('screen-voting-booth');
     const modal = document.getElementById('custom-modal');
     
-    if (booth && booth.parentNode !== document.body) {
-        document.body.appendChild(booth);
-    }
     if (modal && modal.parentNode !== document.body) {
         document.body.appendChild(modal);
     }

@@ -30,6 +30,34 @@ html, body {
     color: var(--text-dark);
 }
 
+.app-footer {
+    margin-top: auto;
+    padding: 18px 10px 22px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--text-grey);
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.04),
+        rgba(0, 0, 0, 0)
+    );
+    border-top: 1px solid #f1f2f6;
+}
+
+.app-footer p {
+    margin: 0;
+    letter-spacing: 0.3px;
+}
+
+.footer-author {
+    font-weight: 700;
+    color: var(--secondary);
+}
+
+.screen.active.booth-mode ~ .app-footer {
+    display: none;
+}
+
 .bg-shape {
     position: fixed;
     border-radius: 50%;
@@ -415,7 +443,7 @@ button {
 .btn-pill-purple i { font-size: 1.1rem; }
 
 .booth-mode {
-    position: fixed !important; 
+    position: absolute;
     top: 0; 
     left: 0; 
     right: 0; 
@@ -430,7 +458,8 @@ button {
     justify-content: center;
     padding: 20px;
     margin: 0 !important;
-    border-radius: 0 !important;
+    inset: 0;
+    border-radius: 30px;
 }
 
 .screen.active.booth-mode {
