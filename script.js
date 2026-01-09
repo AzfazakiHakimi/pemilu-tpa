@@ -415,7 +415,7 @@ function showConfirm(title, message, onYes) {
     i.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
     modalCallback = onYes;
     document.getElementById("modal-action-area").innerHTML = `
-        <button class="btn-secondary-outline btn-modal-cancel" onclick="closeModal()">Batal</button>
+        <button class="btn-secondary-outline" onclick="closeModal()">Batal</button>
         <button class="btn-danger" onclick="confirmModal()">Ya</button>
     `;
     document.getElementById("custom-modal").classList.add("show");

@@ -586,14 +586,15 @@ button {
 }
 
 #modal-action-area button {
-    padding: 15px 25px;
-    border-radius: 12px;
-    box-sizing: border-box;
     flex: 1;
-}
-
-#modal-action-area .btn-secondary-outline {
-    opacity: 0.9;
+    height: 52px;
+    padding: 0 25px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    border-radius: 12px;
 }
 
 .modal-overlay {
