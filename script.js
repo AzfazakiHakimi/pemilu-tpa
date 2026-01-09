@@ -308,6 +308,24 @@ function castVote(name) {
     );
 }
 
+function adminExitVoting() {
+    showConfirm(
+        "Selesai Pemilihan",
+        "Yakin ingin mengakhiri sesi pemilihan ini?",
+        () => {
+            showModal(
+                "Pemilihan Selesai",
+                "Sesi pemilihan telah diakhiri.",
+                "success",
+                () => {
+                    goToScreen("screen-voting-result");
+                    showFinalResults();
+                }
+            );
+        }
+    );
+}
+
 function showFinalResults() {
     document.getElementById("judul-hasil-jabatan").innerText = "Jabatan: " + activeRole;
     const c = document.getElementById("chart-area");
@@ -351,12 +369,19 @@ function confirmResetSystem() {
 function showModal(title, message, type, cb) {
     document.getElementById("modal-title").innerText = title;
     document.getElementById("modal-message").innerText = message;
+
     const i = document.getElementById("modal-icon-type");
     i.style.background = type === "success" ? "#55efc4" : "#ff7675";
-    i.innerHTML = type === "success" ? '<i class="fas fa-check"></i>' : '<i class="fas fa-times"></i>';
+    i.innerHTML =
+        type === "success"
+            ? '<i class="fas fa-check"></i>'
+            : '<i class="fas fa-times"></i>';
+
     modalCallback = cb || null;
+
     document.getElementById("modal-action-area").innerHTML =
-        `<button class="btn-modal" onclick="closeModal()">OKE</button>`;
+        `<button class="btn-modal" onclick="confirmModal()">OKE</button>`;
+
     document.getElementById("custom-modal").classList.add("show");
 }
 
