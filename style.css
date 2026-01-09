@@ -177,11 +177,11 @@ header.compact {
 .color-teal { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
 .color-blue { background: linear-gradient(135deg, #54a0ff, #2e86de); }
 
-#screen-role-manager h3 {
+.content-box h3 {
     font-family: var(--font-heading);
     font-size: 1.3rem;
     margin-bottom: 20px;
-    color: var(--secondary);
+    color: var(--text-dark);
     letter-spacing: 1px;
 }
 

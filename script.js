@@ -95,7 +95,11 @@ function renderRoleList() {
     ul.innerHTML = "";
 
     if (appData.roles.length === 0) {
-        ul.innerHTML = "<li style='color:#999; justify-content:center'>Belum ada jabatan</li>";
+        ul.innerHTML = `
+            <li style="color:#999; justify-content:center;">
+                Belum ada jabatan.
+            </li>
+        `;
         return;
     }
 
@@ -103,8 +107,8 @@ function renderRoleList() {
         const li = document.createElement('li');
         li.innerHTML = `
             <span>${role}</span>
-            <i class="fas fa-times" style="color:red; cursor:pointer"
-               onclick="deleteRole(${index})"></i>
+            <i class="fas fa-times" onclick="deleteRole(${index})"
+               style="cursor:pointer;color:red"></i>
         `;
         ul.appendChild(li);
     });
@@ -148,7 +152,7 @@ function renderStudentList() {
     ul.innerHTML = "";
 
     if (appData.students.length === 0) {
-        ul.innerHTML = "<li style registering'>Belum ada santri</li>";
+        ul.innerHTML = "<li style registering'>Belum ada santri.</li>";
         return;
     }
 
@@ -234,26 +238,80 @@ function renderPhase1RoleButtons() {
 function showPhase1Results() {
     const list = document.getElementById('list-results-p1');
     list.innerHTML = "";
-    
+
+    let totalPeminat = 0;
+
+    appData.roles.forEach(role => {
+        totalPeminat += appData.nominations[role].length;
+    });
+
+    // ✅ JIKA BELUM ADA PEMINAT SAMA SEKALI
+    if (totalPeminat === 0) {
+        list.innerHTML = `
+            <div style="
+                text-align:center;
+                color:#999;
+                padding:20px;
+                font-size:0.95rem;
+            ">
+                Belum ada peminat.
+            </div>
+        `;
+        goToScreen('screen-phase1-results');
+        return;
+    }
+
+    // ✅ JIKA SUDAH ADA PEMINAT
     appData.roles.forEach(role => {
         const names = appData.nominations[role].join(", ");
+        const count = appData.nominations[role].length;
+
         const div = document.createElement('div');
-        div.innerHTML = `<strong>${role} (${appData.nominations[role].length})</strong><br><small>${names || '-'}</small>`;
+        div.innerHTML = `
+            <strong>${role} (${count})</strong><br>
+            <small>${names || '-'}</small>
+        `;
         list.appendChild(div);
     });
-    
+
     goToScreen('screen-phase1-results');
 }
+
 
 function renderPhase2Dashboard() {
     const list = document.getElementById('list-roles-p2');
     list.innerHTML = "";
-    
+
+    if (appData.roles.length === 0) {
+        list.innerHTML = `
+            <div style="
+                text-align:center;
+                color:#999;
+                padding:20px;
+                font-size:0.95rem;
+            ">
+                Belum ada jabatan.
+            </div>
+        `;
+        return;
+    }
+
     appData.roles.forEach(role => {
         const div = document.createElement('div');
-        const count = appData.voting[role].candidates.length;
-        
-        div.innerHTML = `<span>${role}</span> <span style="background:#dfe6e9; padding:5px 10px; border-radius:10px; font-size:0.8rem;">${count} Calon</span>`;
+        const count = appData.voting[role]?.candidates.length || 0;
+
+        div.innerHTML = `
+            <span>${role}</span>
+            <span style="
+                background:#dfe6e9;
+                padding:5px 10px;
+                border-radius:10px;
+                font-size:0.8rem;
+            ">
+                ${count} Calon
+            </span>
+        `;
+
         div.onclick = () => setupVotingScreen(role);
         list.appendChild(div);
     });
@@ -310,7 +368,7 @@ function renderCandidateList() {
     const candidates = appData.voting[activeRole].candidates;
     
     if(candidates.length === 0) {
-        ul.innerHTML = "<li style='color:#999; justify-content:center'>Belum ada kandidat</li>";
+        ul.innerHTML = "<li style='color:#999; justify-content:center'>Belum ada kandidat.</li>";
         return;
     }
 
@@ -399,7 +457,7 @@ function showFinalResults() {
     const sorted = Object.keys(data.votes).sort((a,b) => data.votes[b] - data.votes[a]);
 
     if(total === 0 && sorted.length === 0) {
-        container.innerHTML = "<p style='text-align:center'>Belum ada suara masuk.</p>";
+        container.innerHTML = "<p style='text-align:center'>Belum ada suara.</p>";
     } else {
         sorted.forEach(name => {
             const votes = data.votes[name];
