@@ -1,0 +1,448 @@
+/* --- 1. VARIABEL & RESET --- */
+:root {
+    /* Palet Warna Segar */
+    --bg-gradient: linear-gradient(135deg, #E0C3FC 0%, #8EC5FC 100%); /* Ungu ke Biru Langit */
+    --primary: #00b894;       /* Hijau Mint Segar */
+    --primary-dark: #00a884;
+    --secondary: #6c5ce7;     /* Ungu Modern */
+    --accent: #fdcb6e;        /* Kuning Emas */
+    --danger: #ff7675;        /* Merah Soft */
+    --text-dark: #2d3436;
+    --text-grey: #636e72;
+    --white: #ffffff;
+    
+    /* Font */
+    --font-heading: 'Fredoka One', cursive;
+    --font-body: 'Poppins', sans-serif;
+    
+    /* Shadow / Bayangan */
+    --shadow-soft: 0 10px 20px rgba(0,0,0,0.05);
+    --shadow-float: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru di mobile */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    background-image: var(--bg-gradient);
+    background-attachment: fixed; /* Agar background tetap saat scroll */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center vertikal */
+    color: var(--text-dark);
+}
+
+/* Background Shapes (Hiasan Latar) */
+.bg-shape {
+    position: fixed;
+    border-radius: 50%;
+    z-index: -1;
+    filter: blur(50px);
+    opacity: 0.6;
+}
+.shape1 { width: 300px; height: 300px; background: #55efc4; top: -50px; left: -50px; }
+.shape2 { width: 400px; height: 400px; background: #a29bfe; bottom: -100px; right: -100px; }
+
+/* --- 2. KONTAINER UTAMA --- */
+.app-container {
+    width: 100%;
+    max-width: 500px; /* Ukuran pas seperti aplikasi HP */
+    background: rgba(255, 255, 255, 0.95); /* Putih agak transparan */
+    backdrop-filter: blur(10px);
+    min-height: 90vh; /* Tidak full layar agar terlihat melayang */
+    height: auto;
+    border-radius: 30px;
+    box-shadow: var(--shadow-float);
+    overflow: hidden; /* Agar isi tidak keluar rounded corner */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+/* --- 3. HEADER --- */
+header {
+    background: linear-gradient(to right, var(--primary), #55efc4);
+    padding: 30px 20px;
+    color: white;
+    text-align: center;
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    box-shadow: var(--shadow-soft);
+    flex-shrink: 0;
+}
+
+.logo-box {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-text h1 {
+    font-family: var(--font-heading);
+    margin: 0;
+    font-size: 1.8rem;
+    /* PERBAIKAN: Menambah jarak antar huruf agar tidak dempet */
+    letter-spacing: 3px; 
+    line-height: 1.2;
+}
+
+.header-text p {
+    margin: 5px 0 0;
+    font-size: 1rem; /* Sedikit diperbesar */
+    letter-spacing: 1px; /* Tambah jarak sedikit untuk sub-judul */
+    opacity: 0.9;
+}
+
+/* --- 4. SCREEN MANAGEMENT --- */
+.screen {
+    display: none; /* Default sembunyi */
+    padding: 25px;
+    flex-grow: 1;
+    overflow-y: auto; /* Scrollable jika konten panjang */
+    animation: fadeIn 0.4s ease-out;
+}
+
+.screen.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 5. KOMPONEN MENU (HOME) --- */
+.menu-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Jarak antar kartu menu */
+    margin-top: 10px;
+}
+
+.menu-card {
+    border-radius: 20px;
+    padding: 25px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.menu-card:active {
+    transform: scale(0.98);
+}
+
+.color-teal { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
+.color-blue { background: linear-gradient(135deg, #54a0ff, #2e86de); }
+
+.icon-circle {
+    background: rgba(255,255,255,0.2);
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 1.5rem; margin-bottom: 15px;
+}
+
+.menu-card h2 { 
+    margin: 0 0 5px; 
+    font-family: var(--font-heading);
+    /* PERBAIKAN: Menambah jarak pada tulisan "Fase 1" & "Fase 2" */
+    letter-spacing: 1.5px; 
+    font-size: 1.3rem;
+}
+
+.menu-card p { margin: 0; font-size: 0.85rem; opacity: 0.9; }
+
+/* --- 6. INPUT & BUTTONS --- */
+.content-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    border: 1px solid #f1f2f6;
+    text-align: center;
+}
+
+.illustration {
+    font-size: 3rem; color: var(--secondary); margin-bottom: 15px;
+}
+
+.input-wrapper { margin: 20px 0; }
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+    border: 2px solid #dfe6e9;
+    border-radius: 15px;
+    text-align: center;
+    font-family: var(--font-body);
+    outline: none;
+    transition: 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 184, 148, 0.1);
+}
+
+button {
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-weight: 600;
+    transition: 0.2s;
+    border: none;
+    outline: none;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 1rem;
+    box-shadow: 0 5px 0 #00947e; /* Efek timbul */
+}
+.btn-primary:active { transform: translateY(5px); box-shadow: none; }
+
+.btn-secondary {
+    background: #a29bfe; color: white; width: 100%; padding: 15px; border-radius: 12px;
+    box-shadow: 0 5px 0 #6c5ce7;
+}
+.btn-secondary:active { transform: translateY(5px); box-shadow: none; }
+
+.btn-back {
+    background: transparent; color: var(--text-grey);
+    font-size: 0.9rem; padding: 0; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px; width: auto;
+}
+
+.btn-text {
+    background: transparent; color: var(--secondary); text-decoration: underline; font-size: 0.9rem;
+}
+
+.btn-danger-outline {
+    background: white; border: 2px solid var(--danger); color: var(--danger);
+    padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; margin-top: 30px;
+}
+
+/* --- 7. GRID & LISTS --- */
+.grid-roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 Kolom */
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.role-btn-p1 {
+    background: white;
+    border: 2px solid #f1f2f6;
+    padding: 20px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    color: var(--text-dark);
+    box-shadow: 0 5px 0 #dfe6e9;
+    font-size: 0.95rem;
+}
+.role-btn-p1:active {
+    transform: translateY(5px); box-shadow: none;
+    border-color: var(--primary); color: var(--primary);
+}
+
+.list-container div {
+    background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 10px;
+    border-left: 5px solid var(--primary);
+}
+
+.role-list-vertical div {
+    background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03); cursor: pointer;
+    border: 1px solid #f1f2f6; transition: 0.2s;
+}
+.role-list-vertical div:hover {
+    border-color: var(--secondary); transform: translateX(5px);
+}
+
+/* Candidate Setup */
+.add-candidate-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.btn-icon { width: 50px; border-radius: 12px; background: var(--accent); color: white; font-size: 1.2rem; }
+.candidate-ul { list-style: none; padding: 0; text-align: left; }
+.candidate-ul li {
+    background: #f1f2f6; padding: 12px; border-radius: 8px; margin-bottom: 8px;
+    display: flex; justify-content: space-between; font-weight: 500;
+}
+.divider { border: 0; height: 1px; background: #eee; margin: 20px 0; }
+.action-buttons-row { display: flex; gap: 10px; }
+.btn-secondary-outline {
+    background: white; border: 2px solid var(--secondary); color: var(--secondary);
+    border-radius: 12px; padding: 0 15px;
+}
+
+/* --- TAMBAHAN TOMBOL LIHAT HASIL (KAPSUL) --- */
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 25px;
+}
+
+.btn-pill-purple {
+    background: #ffffff;
+    color: var(--secondary); /* Warna Ungu Teks */
+    border: 2px solid var(--secondary); /* Garis Tepi Ungu */
+    padding: 12px 30px;
+    border-radius: 50px; /* Bentuk Kapsul Bulat */
+    font-size: 0.95rem;
+    font-weight: 700; /* Tebal agar terbaca jelas */
+    font-family: var(--font-body);
+    cursor: pointer;
+    
+    /* Efek Timbul Halus */
+    box-shadow: 0 5px 0 #a29bfe; 
+    transition: all 0.2s ease;
+    
+    /* Flexbox untuk meratakan Ikon dan Teks */
+    display: inline-flex;
+    align-items: center;
+    gap: 10px; 
+}
+
+/* Efek saat Disentuh/Hover */
+.btn-pill-purple:active {
+    transform: translateY(5px); /* Tombol turun ke bawah */
+    box-shadow: none; /* Bayangan hilang */
+    background: var(--secondary); /* Warna jadi ungu penuh */
+    color: #ffffff; /* Teks jadi putih */
+}
+
+.btn-pill-purple i {
+    font-size: 1.1rem; /* Ikon sedikit lebih besar */
+}
+
+/* --- 8. VOTING BOOTH (MODUS BILIK SUARA) --- */
+.booth-mode {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: radial-gradient(circle, #55efc4 0%, #00b894 100%);
+    z-index: 999;
+    
+    /* --- PERBAIKAN PENTING DI SINI --- */
+    /* Jangan langsung display: flex, tapi sembunyikan dulu */
+    display: none; 
+    
+    /* Setting tata letak flex tetap disimpan disini */
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Tambahkan Rule Baru ini:
+   Agar layar hijau HANYA muncul (menjadi flex) saat kelas 'active' ditambahkan oleh JS */
+.screen.active.booth-mode {
+    display: flex !important;
+}
+
+.booth-content {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    padding: 30px; border-radius: 30px;
+    width: 100%; max-width: 400px;
+    text-align: center; color: white;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+}
+
+.booth-subtitle { margin: 0; font-size: 1.1rem; opacity: 0.9; }
+#booth-role-title {
+    font-family: var(--font-heading); font-size: 2.5rem; margin: 5px 0 30px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.1); letter-spacing: 2px;
+}
+
+.voting-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+.vote-btn {
+    background: white; color: var(--text-dark); padding: 20px;
+    font-size: 1.3rem; border-radius: 15px;
+    box-shadow: 0 8px 0 #dfe6e9; font-family: var(--font-heading);
+}
+.vote-btn:active { transform: translateY(8px); box-shadow: none; background: #ffeaa7; }
+
+.btn-admin-lock {
+    margin-top: 30px; background: rgba(0,0,0,0.1); color: rgba(255,255,255,0.7);
+    padding: 8px 15px; border-radius: 20px; font-size: 0.8rem;
+}
+
+/* --- TAMBAHAN STYLE TOMBOL RESET --- */
+
+.btn-danger {
+    /* Gradasi Merah Modern */
+    background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 15px;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: var(--font-body);
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    
+    /* Efek Timbul (Shadow Merah Gelap) */
+    box-shadow: 0 6px 0 #b71c1c; 
+    
+    /* Jarak atas agar tidak nempel grafik */
+    margin-top: 30px; 
+}
+
+.btn-danger:active {
+    /* Efek saat ditekan */
+    transform: translateY(6px);
+    box-shadow: none;
+}
+
+.btn-danger i {
+    margin-right: 8px; /* Jarak antara ikon dan tulisan */
+}
+
+/* --- 9. MODAL POPUP --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+    z-index: 2000; display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.show { display: flex; animation: zoomIn 0.3s; }
+@keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.modal-box {
+    background: white; width: 80%; max-width: 320px; padding: 30px;
+    border-radius: 25px; text-align: center;
+}
+.modal-icon-circle {
+    width: 70px; height: 70px; margin: 0 auto 15px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 2rem;
+    background: #55efc4; color: white;
+}
+.btn-modal {
+    background: var(--text-dark); color: white; padding: 12px 30px;
+    border-radius: 30px; margin-top: 15px;
+}
+
+/* --- 10. CHART AREA --- */
+.bar-item { margin-bottom: 15px; }
+.bar-label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; }
+.bar-bg { background: #dfe6e9; border-radius: 10px; height: 20px; overflow: hidden; }
+.bar-fill { background: var(--secondary); height: 100%; width: 0; transition: width 1s ease; }
