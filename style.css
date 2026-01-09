@@ -586,7 +586,14 @@ button {
 }
 
 #modal-action-area button {
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-sizing: border-box;
     flex: 1;
+}
+
+#modal-action-area .btn-secondary-outline {
+    opacity: 0.9;
 }
 
 .modal-overlay {
