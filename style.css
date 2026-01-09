@@ -314,7 +314,6 @@ button {
     width: 100%;
     box-sizing: border-box;
     font-size: 1rem;
-    box-shadow: 0 5px 0 #00947e;
 }
 
 .btn-primary:active { transform: translateY(5px); box-shadow: none; }
