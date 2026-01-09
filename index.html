@@ -101,10 +101,15 @@
 
                 <hr class="divider">
 
-                <div class="text-center">
+                <div class="action-buttons-row">
                     <button class="btn-primary btn-play" onclick="startPeminatan()">
                         <i class="fas fa-play"></i>
                         <span>Peminatan</span>
+                    </button>
+
+                    <button class="btn-secondary-outline btn-play" onclick="showPhase1Results()">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Lihat Hasil</span>
                     </button>
                 </div>
             </div>
@@ -122,12 +127,6 @@
             <ul id="list-students-select" class="candidate-ul"></ul>
 
             <hr class="divider">
-
-            <div class="action-buttons-row">
-                <button class="btn-secondary-outline btn-wide" onclick="showPhase1Results()">
-                    <i class="fas fa-chart-bar"></i> Lihat Hasil Peminatan
-                </button>
-            </div>
         </div>
     </div>
 
@@ -148,7 +147,7 @@
 
     <div id="screen-phase1-results" class="screen">
         <div class="screen-inner">
-            <button class="btn-back" onclick="goToScreen('screen-phase1-student-list')">
+            <button class="btn-back" onclick="goToScreen('screen-phase1-students')">
                 <i class="fas fa-arrow-left"></i> Kembali
             </button>
 

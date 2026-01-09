@@ -413,6 +413,13 @@ button {
     gap: 8px;
     flex: 1;
 }
+
+.start-peminatan-btn {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
 .candidate-ul { list-style: none; padding: 0; text-align: left; }
 
 .candidate-ul li {
@@ -475,11 +482,11 @@ button {
     left: 0; 
     right: 0; 
     bottom: 0;
-    width: 100vw !important; 
-    height: 100vh !important;
+    width: 100dvw;
+    height: 100dvh;
     background: radial-gradient(circle, #55efc4 0%, #00b894 100%);
     z-index: 99999;
-    display: none; 
+    display: flex; 
     flex-direction: column; 
     align-items: center; 
     justify-content: center;
@@ -487,10 +494,20 @@ button {
     margin: 0 !important;
     inset: 0;
     border-radius: 30px;
+    gap: 30px;
 }
 
 .screen.active.booth-mode {
-    display: flex !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    width: 100%;
+    max-width: none;
+}
+
+.screen.active.booth-mode > .btn-danger {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .booth-content {
@@ -498,7 +515,7 @@ button {
     backdrop-filter: blur(15px);
     padding: 40px; 
     border-radius: 30px;
-    width: 90%; 
+    width: 100%; 
     max-width: 600px;
     text-align: center; 
     color: white;
@@ -520,7 +537,6 @@ button {
     display: grid;
     grid-template-columns: 1fr;
     gap: 15px;
-    margin-bottom: 30px;
 }
 .vote-btn {
     background: white; color: var(--text-dark); padding: 20px;
@@ -595,12 +611,8 @@ button {
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    margin: 0 !important;
     line-height: 1;
-}
-
-.modal-box button {
-    margin: 0;
+    margin: 0 !important;
 }
 
 .modal-overlay {
@@ -659,6 +671,7 @@ button {
 
 .screen-inner {
     width: 100%;
+    max-width: none;
 }
 
 @media (hover: hover) {
