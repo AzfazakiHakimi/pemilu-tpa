@@ -62,9 +62,22 @@ function goToScreen(screenId) {
 
     document.getElementById(screenId).classList.add('active');
 
-    if (screenId === 'screen-phase1-students') {
-        renderStudentList();
+    if (screenId === 'screen-phase1-student-list') {
+    renderStudentSelectList();
     }
+}
+
+function openPeminatan() {
+    if (appData.roles.length === 0) {
+        showCustomModal(
+            "Belum Bisa",
+            "Silakan tambahkan jabatan terlebih dahulu.",
+            "error"
+        );
+        return;
+    }
+
+    goToScreen('screen-phase1-students');
 }
 
 function addRole() {
@@ -152,9 +165,78 @@ function renderStudentList() {
     ul.innerHTML = "";
 
     if (appData.students.length === 0) {
-        ul.innerHTML = "<li style registering'>Belum ada santri.</li>";
+        ul.innerHTML = `
+            <li style="color:#999; justify-content:center;">
+                Belum ada santri.
+            </li>
+        `;
         return;
     }
+
+    appData.students.forEach((s, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span>${s.name}</span>
+            <i class="fas fa-times"
+               style="color:red; cursor:pointer"
+               onclick="deleteStudent(${index})"></i>
+        `;
+        ul.appendChild(li);
+    });
+}
+
+function deleteStudent(index) {
+    if (!confirm("Hapus santri ini?")) return;
+
+    const name = appData.students[index].name;
+
+    // hapus dari daftar santri
+    appData.students.splice(index, 1);
+
+    // hapus dari semua peminatan (jaga konsistensi)
+    appData.roles.forEach(role => {
+        appData.nominations[role] =
+            appData.nominations[role].filter(n => n !== name);
+    });
+
+    saveSystemData();
+    renderStudentList();
+}
+
+let activeStudentIndex = null;
+
+function openStudentChoice(index) {
+    if (appData.roles.length === 0) {
+        showCustomModal(
+            "Belum Bisa",
+            "Belum ada jabatan yang bisa dipilih.",
+            "error"
+        );
+        return;
+    }
+
+    activeStudentIndex = index;
+    const student = appData.students[index];
+    document.getElementById('greet-santri').innerText = `Halo, ${student.name}!`;
+    goToScreen('screen-phase1-choose');
+}
+
+function startPeminatan() {
+    if (appData.students.length === 0) {
+        showCustomModal(
+            "Belum Bisa",
+            "Tambahkan santri terlebih dahulu.",
+            "error"
+        );
+        return;
+    }
+
+    goToScreen('screen-phase1-student-list');
+}
+
+function renderStudentSelectList() {
+    const ul = document.getElementById('list-students-select');
+    ul.innerHTML = "";
 
     appData.students.forEach((s, index) => {
         const li = document.createElement('li');
@@ -167,23 +249,14 @@ function renderStudentList() {
         `;
 
         if (!s.chosen) {
-            li.onclick = () => openStudentChoice(index);
             li.style.cursor = "pointer";
+            li.onclick = () => openStudentChoice(index);
         } else {
             li.style.opacity = "0.6";
         }
 
         ul.appendChild(li);
     });
-}
-
-let activeStudentIndex = null;
-
-function openStudentChoice(index) {
-    activeStudentIndex = index;
-    const student = appData.students[index];
-    document.getElementById('greet-santri').innerText = `Halo, ${student.name}!`;
-    goToScreen('screen-phase1-choose');
 }
 
 function submitPhase1Choice(role) {

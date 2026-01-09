@@ -42,7 +42,7 @@
                     <p>Atur jabatan pemilihan</p>
                 </div>
 
-                <div class="menu-card color-teal" onclick="goToScreen('screen-phase1-students')">
+                <div class="menu-card color-teal" onclick="openPeminatan()">
                     <div class="icon-circle"><i class="fas fa-user-check"></i></div>
                     <h2>Peminatan</h2>
                     <p>Santri memilih jabatan</p>
@@ -105,12 +105,36 @@
 
                 <ul id="list-students" class="candidate-ul"></ul>
 
+                <hr class="divider">
+
+                <div class="action-buttons-row">
+                    <button class="btn-primary" onclick="startPeminatan()">
+                        <i class="fas fa-play"></i> Mulai Peminatan
+                    </button>
+
+                    <button class="btn-secondary-outline" onclick="showPhase1Results()">
+                        <i class="fas fa-chart-bar"></i> Lihat Hasil
+                    </button>
+                </div>
+
                 <div class="text-center mt-20">
                     <button class="btn-pill-purple" onclick="showPhase1Results()">
                         <i class="fas fa-clipboard-list"></i> Lihat Hasil Peminatan
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="screen-phase1-student-list" class="screen">
+        <div class="screen-inner">
+            <button class="btn-back" onclick="goToScreen('screen-phase1-students')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+
+            <h3>Pilih Santri</h3>
+
+            <ul id="list-students-select" class="candidate-ul"></ul>
         </div>
     </div>
 
