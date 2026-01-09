@@ -4,6 +4,7 @@ const ROLES_LIST = [
 ];
 
 let appData = {
+    roles: [],
     nominations: {}, 
     voting: {}       
 };
@@ -42,9 +43,11 @@ function saveSystemData() {
 }
 
 function initDataStructure() {
-    ROLES_LIST.forEach(role => {
+    appData.roles.forEach(role => {
         if (!appData.nominations[role]) appData.nominations[role] = [];
-        if (!appData.voting[role]) appData.voting[role] = { candidates: [], votes: {} };
+        if (!appData.voting[role]) {
+            appData.voting[role] = { candidates: [], votes: {} };
+        }
     });
 }
 
@@ -68,6 +71,65 @@ function goToScreen(screenId) {
     document.getElementById(screenId).classList.add('active');
 }
 
+function addRole() {
+    const input = document.getElementById('input-role-name');
+    const role = input.value.trim();
+
+    if (!role) return;
+
+    if (appData.roles.includes(role)) {
+        showCustomModal("Gagal", "Jabatan sudah ada.", "error");
+        return;
+    }
+
+    appData.roles.push(role);
+    appData.nominations[role] = [];
+    appData.voting[role] = { candidates: [], votes: {} };
+
+    saveSystemData();
+    input.value = "";
+
+    renderRoleList();
+    renderPhase1RoleButtons();
+    renderPhase2Dashboard();
+}
+
+function renderRoleList() {
+    const ul = document.getElementById('list-roles');
+    ul.innerHTML = "";
+
+    if (appData.roles.length === 0) {
+        ul.innerHTML = "<li style='color:#999; justify-content:center'>Belum ada jabatan</li>";
+        return;
+    }
+
+    appData.roles.forEach((role, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <span>${role}</span>
+            <i class="fas fa-times" style="color:red; cursor:pointer"
+               onclick="deleteRole(${index})"></i>
+        `;
+        ul.appendChild(li);
+    });
+}
+
+function deleteRole(index) {
+    const role = appData.roles[index];
+
+    if (!confirm(`Hapus jabatan ${role}?`)) return;
+
+    appData.roles.splice(index, 1);
+    delete appData.nominations[role];
+    delete appData.voting[role];
+
+    saveSystemData();
+
+    renderRoleList();
+    renderPhase1RoleButtons();
+    renderPhase2Dashboard();
+}
+
 function processPhase1Name() {
     const input = document.getElementById('input-santri-name');
     const name = input.value.trim();
@@ -87,10 +149,10 @@ function renderPhase1RoleButtons() {
     const container = document.getElementById('container-roles-p1');
     container.innerHTML = "";
     
-    ROLES_LIST.forEach(role => {
+    appData.roles.forEach(role => {
         const btn = document.createElement('button');
         btn.className = 'role-btn-p1';
-        btn.innerHTML = `<i class="fas fa-star" style="color:#fdcb6e"></i> ${role}`;
+        btn.innerHTML = `${role}`;
         btn.onclick = () => submitPhase1Choice(role);
         container.appendChild(btn);
     });
@@ -110,7 +172,7 @@ function showPhase1Results() {
     const list = document.getElementById('list-results-p1');
     list.innerHTML = "";
     
-    ROLES_LIST.forEach(role => {
+    appData.roles.forEach(role => {
         const names = appData.nominations[role].join(", ");
         const div = document.createElement('div');
         div.innerHTML = `<strong>${role} (${appData.nominations[role].length})</strong><br><small>${names || '-'}</small>`;
@@ -124,7 +186,7 @@ function renderPhase2Dashboard() {
     const list = document.getElementById('list-roles-p2');
     list.innerHTML = "";
     
-    ROLES_LIST.forEach(role => {
+    appData.roles.forEach(role => {
         const div = document.createElement('div');
         const count = appData.voting[role].candidates.length;
         

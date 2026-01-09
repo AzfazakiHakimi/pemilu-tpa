@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Pemilu TPA Al Mujahidin</title>
+        <title>Pemilu TPA Al Mujahidin Dolo</title>
         <link rel="stylesheet" href="style.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,15 +27,21 @@
             <div id="screen-home" class="screen active">
                 <div class="screen-inner">
                     <div class="menu-container">
+                        <div class="menu-card color-purple" onclick="goToScreen('screen-role-manager')">
+                            <div class="icon-circle"><i class="fas fa-briefcase"></i></div>
+                            <h2>Jabatan</h2>
+                            <p>Atur jabatan pemilihan</p>
+                        </div>
+
                         <div class="menu-card color-teal" onclick="goToScreen('screen-phase1-input')">
                             <div class="icon-circle"><i class="fas fa-user-check"></i></div>
-                            <h2>Fase 1: Minat</h2>
+                            <h2>Peminatan</h2>
                             <p>Santri memilih jabatan</p>
                         </div>
 
                         <div class="menu-card color-blue" onclick="goToScreen('screen-phase2-dashboard')">
                             <div class="icon-circle"><i class="fas fa-vote-yea"></i></div>
-                            <h2>Fase 2: Pemilihan</h2>
+                            <h2>Pemilihan</h2>
                             <p>Voting kandidat final</p>
                         </div>
                     </div>
@@ -44,6 +50,27 @@
                         <button class="btn-danger-outline" onclick="resetSystemData()">
                             <i class="fas fa-trash-alt"></i> Reset Data
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="screen-role-manager" class="screen">
+                <div class="screen-inner">
+                    <button class="btn-back" onclick="goToScreen('screen-home')">
+                        <i class="fas fa-arrow-left"></i> Kembali
+                    </button>
+
+                    <div class="content-box">
+                        <h3>Kelola Jabatan</h3>
+
+                        <div class="add-candidate-row">
+                            <input type="text" id="input-role-name" placeholder="Nama Jabatan">
+                            <button class="btn-icon" onclick="addRole()">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+
+                        <ul id="list-roles" class="candidate-ul"></ul>
                     </div>
                 </div>
             </div>
