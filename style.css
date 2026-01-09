@@ -25,17 +25,22 @@
     -webkit-tap-highlight-color: transparent; /* Hilangkan highlight biru di mobile */
 }
 
-body {
+html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
-    font-family: var(--font-body);
+    
     background-image: var(--bg-gradient);
-    background-attachment: fixed; /* Agar background tetap saat scroll */
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center; /* Center vertikal */
+    background-attachment: fixed;
+    background-size: cover;
+    
+    font-family: var(--font-body);
     color: var(--text-dark);
+
+    /* --- TAMBAHKAN 3 BARIS INI AGAR TENGAH DI DESKTOP --- */
+    display: flex;            /* 1. Aktifkan mode fleksibel */
+    justify-content: center;  /* 2. Buat posisi rata tengah secara horizontal (kiri-kanan) */
+    align-items: center;      /* 3. Buat posisi rata tengah secara vertikal (atas-bawah) */
 }
 
 /* Background Shapes (Hiasan Latar) */
@@ -52,10 +57,17 @@ body {
 /* --- 2. KONTAINER UTAMA --- */
 .app-container {
     width: 100%;
-    max-width: 500px; /* Ukuran pas seperti aplikasi HP */
-    background: rgba(255, 255, 255, 0.95); /* Putih agak transparan */
+    
+    /* UBAH DARI 500px MENJADI 800px atau 900px */
+    /* Agar terlihat lebar dan lega di layar komputer */
+    max-width: 800px; 
+    
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    min-height: 90vh; /* Tidak full layar agar terlihat melayang */
+    
+    /* UBAH MIN-HEIGHT AGAR LEBIH PROPORSIONAL */
+    /* Jangan 90vh, ganti jadi auto atau min-height yang cukup */
+    min-height: 600px;
     height: auto;
     border-radius: 30px;
     box-shadow: var(--shadow-float);
@@ -446,3 +458,27 @@ button {
 .bar-label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; }
 .bar-bg { background: #dfe6e9; border-radius: 10px; height: 20px; overflow: hidden; }
 .bar-fill { background: var(--secondary); height: 100%; width: 0; transition: width 1s ease; }
+
+/* --- RESPONSIVE FIX (AGAR FULL LAYAR DI HP) --- */
+@media (max-width: 600px) {
+    .app-container {
+        width: 100%;
+        max-width: 100%;
+        min-height: 100vh; /* Paksa tinggi minimal setinggi layar penuh */
+        height: auto;
+        margin: 0; /* Hilangkan margin putih di pinggir */
+        border-radius: 0; /* Hilangkan sudut bulat di pojok layar */
+        box-shadow: none; /* Hilangkan bayangan luar */
+    }
+
+    header {
+        /* Sudut bulat hanya di bawah header */
+        border-radius: 0 0 30px 30px; 
+        padding-top: 40px; /* Tambahan padding agar tidak tertutup poni HP/Notifikasi */
+    }
+    
+    /* Perbaiki tombol reset agar tidak terlalu mepet bawah */
+    .footer-area {
+        padding-bottom: 40px; 
+    }
+}
