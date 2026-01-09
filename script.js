@@ -50,10 +50,8 @@ function initDataStructure() {
 }
 
 function resetSystemData() {
-    if(confirm("HAPUS SEMUA DATA?")) {
-        localStorage.removeItem('tpa_election_v8_final');
-        location.reload();
-    }
+    localStorage.removeItem('tpa_election_v8_final');
+    location.reload();
 }
 
 function goToScreen(screenId) {
@@ -584,13 +582,22 @@ function showFinalResults() {
 }
 
 function resetVotingForRole() {
-    if(confirm(`Reset suara ${activeRole}?`)) {
-        appData.voting[activeRole].candidates.forEach(n => {
-            appData.voting[activeRole].votes[n] = 0;
-        });
-        saveSystemData();
-        showFinalResults();
-    }
+    showCustomModal(
+        "Konfirmasi",
+        `Reset seluruh suara untuk jabatan ${activeRole}?`,
+        "error",
+        () => {
+            // reset semua suara
+            appData.voting[activeRole].candidates.forEach(name => {
+                appData.voting[activeRole].votes[name] = 0;
+            });
+
+            saveSystemData();
+
+            // tetap di halaman hasil voting
+            showFinalResults();
+        }
+    );
 }
 
 function showCustomModal(title, msg, type, callback) {
@@ -628,4 +635,15 @@ function adminResetData() {
     } else if (pass !== null) {
         alert("PIN salah!");
     }
+}
+
+function confirmResetSystem() {
+    showCustomModal(
+        "Konfirmasi Reset",
+        "Semua data (jabatan, santri, peminatan, dan voting) akan dihapus. Lanjutkan?",
+        "error",
+        () => {
+            resetSystemData();
+        }
+    );
 }
