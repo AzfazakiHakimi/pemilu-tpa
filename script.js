@@ -1,65 +1,47 @@
-// ==========================================
-// 1. DATA & KONFIGURASI AWAL
-// ==========================================
-
 const ROLES_LIST = [
     "Ketua", "Wakil", "Sekretaris", "Bendahara", 
     "Ketertiban", "Kerapian", "Kebersihan", "Perlengkapan"
 ];
 
-// Struktur Data Utama
 let appData = {
-    nominations: {}, // Fase 1: { 'Ketua': ['Ahmad', 'Budi'], ... }
-    voting: {}       // Fase 2: { 'Ketua': { candidates: [], votes: {} } }
+    nominations: {}, 
+    voting: {}       
 };
 
-// Variabel Sementara (State)
 let tempStudentName = "";
-let activeRole = "";
-let onModalCloseCallback = null; // Untuk menangani aksi setelah tombol OK di modal diklik
-
-// ==========================================
-// 2. SISTEM UTAMA (INIT & NAVIGATION)
-// ==========================================
+let activeRole = ""; 
+let onModalCloseCallback = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    const booth = document.getElementById('screen-voting-booth');
+    const modal = document.getElementById('custom-modal');
+    
+    if (booth && booth.parentNode !== document.body) {
+        document.body.appendChild(booth);
+    }
+    if (modal && modal.parentNode !== document.body) {
+        document.body.appendChild(modal);
+    }
+
     loadSystemData();
     initDataStructure();
     
-    // Render awal elemen yang statis
     renderPhase1RoleButtons();
     renderPhase2Dashboard();
 });
 
-// Fungsi Pindah Layar (Screen Switcher)
-function goToScreen(screenId) {
-    // Sembunyikan semua layar
-    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
-    // Tampilkan layar yang dituju
-    const target = document.getElementById(screenId);
-    if(target) {
-        target.classList.add('active');
-        // Scroll ke atas setiap ganti layar
-        window.scrollTo(0,0);
-    } else {
-        console.error("Screen ID not found:", screenId);
-    }
-}
-
-// Fungsi Load/Save LocalStorage
-function saveSystemData() {
-    localStorage.setItem('tpa_election_v3', JSON.stringify(appData));
-}
-
 function loadSystemData() {
-    const stored = localStorage.getItem('tpa_election_v3');
+    const stored = localStorage.getItem('tpa_election_v8_final');
     if (stored) {
         appData = JSON.parse(stored);
     }
 }
 
+function saveSystemData() {
+    localStorage.setItem('tpa_election_v8_final', JSON.stringify(appData));
+}
+
 function initDataStructure() {
-    // Pastikan struktur data lengkap (antisipasi jika data kosong/baru)
     ROLES_LIST.forEach(role => {
         if (!appData.nominations[role]) appData.nominations[role] = [];
         if (!appData.voting[role]) appData.voting[role] = { candidates: [], votes: {} };
@@ -67,78 +49,44 @@ function initDataStructure() {
 }
 
 function resetSystemData() {
-    if(confirm("PERINGATAN KERAS: Apakah Anda yakin ingin menghapus SEMUA data pemilihan? Tindakan ini tidak bisa dibatalkan.")) {
-        localStorage.removeItem('tpa_election_v3');
+    if(confirm("HAPUS SEMUA DATA?")) {
+        localStorage.removeItem('tpa_election_v8_final');
         location.reload();
     }
 }
 
-// ==========================================
-// 3. SISTEM POPUP MODAL (PENGGANTI ALERT)
-// ==========================================
+function goToScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
 
-function showCustomModal(title, message, type = 'success', callback = null) {
-    const modal = document.getElementById('custom-modal');
-    const titleEl = document.getElementById('modal-title');
-    const msgEl = document.getElementById('modal-message');
-    const iconContainer = document.getElementById('modal-icon-type');
-
-    titleEl.innerText = title;
-    msgEl.innerText = message;
-    
-    // Set Icon & Warna Berdasarkan Tipe
-    if (type === 'success') {
-        iconContainer.style.background = '#55efc4'; // Hijau
-        iconContainer.innerHTML = '<i class="fas fa-check"></i>';
-    } else if (type === 'error') {
-        iconContainer.style.background = '#ff7675'; // Merah
-        iconContainer.innerHTML = '<i class="fas fa-times"></i>';
-    } else if (type === 'info') {
-        iconContainer.style.background = '#74b9ff'; // Biru
-        iconContainer.innerHTML = '<i class="fas fa-info"></i>';
+    const header = document.querySelector('header');
+    if(screenId !== 'screen-home') {
+        header.classList.add('compact');
+    } else {
+        header.classList.remove('compact');
     }
 
-    onModalCloseCallback = callback;
-    modal.classList.add('show');
+    document.getElementById(screenId).classList.add('active');
 }
-
-function closeCustomModal() {
-    const modal = document.getElementById('custom-modal');
-    modal.classList.remove('show');
-    
-    // Jalankan callback jika ada (misal: pindah halaman setelah klik OK)
-    if (onModalCloseCallback) {
-        onModalCloseCallback();
-        onModalCloseCallback = null;
-    }
-}
-
-// ==========================================
-// 4. LOGIKA FASE 1: PENJARINGAN (MINAT)
-// ==========================================
 
 function processPhase1Name() {
-    const inputEl = document.getElementById('input-santri-name');
-    const name = inputEl.value.trim();
-
-    if (name === "") {
-        showCustomModal("Ups!", "Tulis namamu dulu ya.", "error");
+    const input = document.getElementById('input-santri-name');
+    const name = input.value.trim();
+    
+    if (!name) {
+        showCustomModal("Ups", "Isi nama dulu!", "error");
         return;
     }
-
-    tempStudentName = name;
-    // Update sapaan di layar berikutnya
-    document.getElementById('greet-santri').innerText = `Halo, ${name}!`;
     
-    // Bersihkan input dan pindah layar
-    inputEl.value = "";
+    tempStudentName = name;
+    document.getElementById('greet-santri').innerText = `Halo, ${name}!`;
+    input.value = ""; 
     goToScreen('screen-phase1-choose');
 }
 
 function renderPhase1RoleButtons() {
     const container = document.getElementById('container-roles-p1');
     container.innerHTML = "";
-
+    
     ROLES_LIST.forEach(role => {
         const btn = document.createElement('button');
         btn.className = 'role-btn-p1';
@@ -148,60 +96,39 @@ function renderPhase1RoleButtons() {
     });
 }
 
-function submitPhase1Choice(roleChoice) {
-    if (roleChoice !== 'Tidak Menjabat') {
-        // Simpan nama ke array jabatan tersebut
-        appData.nominations[roleChoice].push(tempStudentName);
+function submitPhase1Choice(role) {
+    if (role !== 'Tidak Menjabat') {
+        appData.nominations[role].push(tempStudentName);
     }
-    
     saveSystemData();
-
-    // Tampilkan popup sukses, lalu kembali ke input nama
-    showCustomModal(
-        "Tersimpan!", 
-        `Terima kasih ${tempStudentName}, pilihanmu sudah dicatat.`, 
-        "success", 
-        () => {
-            goToScreen('screen-phase1-input');
-        }
-    );
+    showCustomModal("Sukses", `Pilihan ${tempStudentName} tersimpan.`, "success", () => {
+        goToScreen('screen-phase1-input');
+    });
 }
 
 function showPhase1Results() {
-    const container = document.getElementById('list-results-p1');
-    container.innerHTML = "";
-
+    const list = document.getElementById('list-results-p1');
+    list.innerHTML = "";
+    
     ROLES_LIST.forEach(role => {
+        const names = appData.nominations[role].join(", ");
         const div = document.createElement('div');
-        const listNames = appData.nominations[role];
-        const namesString = listNames.length > 0 ? listNames.join(", ") : "<i style='color:#aaa'>Belum ada peminat</i>";
-        
-        div.innerHTML = `
-            <strong>${role} (${listNames.length})</strong><br>
-            <small>${namesString}</small>
-        `;
-        container.appendChild(div);
+        div.innerHTML = `<strong>${role} (${appData.nominations[role].length})</strong><br><small>${names || '-'}</small>`;
+        list.appendChild(div);
     });
-
+    
     goToScreen('screen-phase1-results');
 }
-
-// ==========================================
-// 5. LOGIKA FASE 2: SETUP & VOTING
-// ==========================================
 
 function renderPhase2Dashboard() {
     const list = document.getElementById('list-roles-p2');
     list.innerHTML = "";
-
+    
     ROLES_LIST.forEach(role => {
         const div = document.createElement('div');
         const count = appData.voting[role].candidates.length;
         
-        div.innerHTML = `
-            <span><i class="fas fa-tag" style="color:var(--secondary)"></i> &nbsp; ${role}</span>
-            <span style="background:#dfe6e9; padding:5px 10px; border-radius:10px; font-size:0.8rem; font-weight:bold;">${count} Kandidat</span>
-        `;
+        div.innerHTML = `<span>${role}</span> <span style="background:#dfe6e9; padding:5px 10px; border-radius:10px; font-size:0.8rem;">${count} Calon</span>`;
         div.onclick = () => setupVotingScreen(role);
         list.appendChild(div);
     });
@@ -209,83 +136,72 @@ function renderPhase2Dashboard() {
 
 function setupVotingScreen(role) {
     activeRole = role;
-    document.getElementById('setup-role-name').innerText = role;
-    renderSetupCandidateList();
+    
+    const titleEl = document.getElementById('judul-setup-jabatan');
+    if(titleEl) titleEl.innerText = role;
+
+    renderCandidateList();
     goToScreen('screen-phase2-setup');
 }
-
-// --- Manajemen Kandidat ---
 
 function addCandidateAction() {
     const input = document.getElementById('input-candidate');
     const name = input.value.trim();
-
-    if (!name) return;
-
-    // Cek duplikasi
-    if (appData.voting[activeRole].candidates.includes(name)) {
-        showCustomModal("Gagal", "Nama kandidat sudah ada!", "error");
+    
+    if(!name) return;
+    
+    if(appData.voting[activeRole].candidates.includes(name)) {
+        showCustomModal("Gagal", "Nama sudah ada.", "error");
         return;
     }
 
-    // Tambah kandidat
     appData.voting[activeRole].candidates.push(name);
-    // Inisialisasi suara 0
-    if (appData.voting[activeRole].votes[name] === undefined) {
+    if(appData.voting[activeRole].votes[name] === undefined) {
         appData.voting[activeRole].votes[name] = 0;
     }
     
     saveSystemData();
     input.value = "";
-    renderSetupCandidateList();
-    renderPhase2Dashboard(); // Update angka di dashboard
+    renderCandidateList();
+    renderPhase2Dashboard();
 }
 
-function renderSetupCandidateList() {
+function renderCandidateList() {
     const ul = document.getElementById('list-candidates-setup');
     ul.innerHTML = "";
     const candidates = appData.voting[activeRole].candidates;
-
-    if (candidates.length === 0) {
-        ul.innerHTML = "<li style='justify-content:center; color:#999'>Belum ada kandidat final</li>";
+    
+    if(candidates.length === 0) {
+        ul.innerHTML = "<li style='color:#999; justify-content:center'>Belum ada kandidat</li>";
         return;
     }
 
     candidates.forEach((name, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `
-            <span>${name}</span>
-            <i class="fas fa-times" style="color:#ff7675; cursor:pointer;" onclick="removeCandidate(${index})"></i>
-        `;
+        li.innerHTML = `<span>${name}</span> <i class="fas fa-times" style="color:red; cursor:pointer;" onclick="deleteCandidate(${index})"></i>`;
         ul.appendChild(li);
     });
 }
 
-function removeCandidate(index) {
+function deleteCandidate(index) {
     const name = appData.voting[activeRole].candidates[index];
-    
-    // Hapus dari array candidates
     appData.voting[activeRole].candidates.splice(index, 1);
-    // Hapus data suaranya juga
     delete appData.voting[activeRole].votes[name];
-    
     saveSystemData();
-    renderSetupCandidateList();
+    renderCandidateList();
     renderPhase2Dashboard();
 }
-
-// --- Proses Voting (Bilik Suara) ---
 
 function startVotingSession() {
     const candidates = appData.voting[activeRole].candidates;
     
-    // Izinkan 1 kandidat (aklamasi) atau lebih
-    if (candidates.length < 1) {
-        showCustomModal("Belum Siap", "Masukkan minimal 1 kandidat sebelum mulai.", "error");
+    if(candidates.length < 1) {
+        showCustomModal("Ups", "Minimal 1 kandidat!", "error");
         return;
     }
 
-    document.getElementById('booth-role-title').innerText = activeRole.toUpperCase();
+    document.getElementById('judul-bilik-suara').innerText = activeRole.toUpperCase();
+    
     renderVotingButtons();
     goToScreen('screen-voting-booth');
 }
@@ -299,90 +215,110 @@ function renderVotingButtons() {
         const btn = document.createElement('button');
         btn.className = 'vote-btn';
         btn.innerText = name;
-        btn.onclick = () => submitVote(name);
+        
+        btn.onclick = function() {
+            castVote(name);
+        };
+        
         container.appendChild(btn);
     });
 }
 
-function submitVote(candidateName) {
-    // Tambah suara
-    appData.voting[activeRole].votes[candidateName]++;
+let voteLocked = false;
+
+function castVote(name) {
+    if(voteLocked) return;
+    voteLocked = true;
+
+    appData.voting[activeRole].votes[name]++;
     saveSystemData();
 
-    // Tampilkan popup sukses
-    showCustomModal(
-        "Suara Masuk!", 
-        "Terima kasih telah memilih. Panggil teman berikutnya.", 
-        "success", 
-        () => {
-            // Callback kosong: Tetap di layar booth, siap untuk anak selanjutnya
-            // Kita bisa reset scroll atau animasi jika perlu
-        }
-    );
+    setTimeout(() => voteLocked = false, 3000);
+
+    showCustomModal("Suara Masuk!", `Pilihan untuk ${name} dicatat.`, "success");
 }
 
 function adminExitVoting() {
-    // Prompt password sederhana
-    const pass = prompt("Masukkan PIN Admin untuk melihat hasil:", "");
-    if (pass === "1234") { // PIN Default
+    const pass = prompt("PIN Admin:", "");
+    if(pass === "1234") {
         showFinalResults();
-    } else {
-        if(pass !== null) alert("PIN Salah!"); // Alert bawaan hanya untuk admin error
+    } else if (pass !== null) {
+        alert("PIN Salah!");
     }
 }
 
-// ==========================================
-// 6. HASIL AKHIR & GRAFIK
-// ==========================================
-
 function showFinalResults() {
-    document.getElementById('result-role-label').innerText = "Jabatan: " + activeRole;
+    document.getElementById('judul-hasil-jabatan').innerText = "Jabatan: " + activeRole;
+    
     const container = document.getElementById('chart-area');
     container.innerHTML = "";
-
-    const roleData = appData.voting[activeRole];
-    let totalVotes = 0;
     
-    // Hitung total
-    for (let candidate in roleData.votes) {
-        totalVotes += roleData.votes[candidate];
-    }
+    const data = appData.voting[activeRole];
+    let total = 0;
+    
+    for(let key in data.votes) total += data.votes[key];
+    
+    const sorted = Object.keys(data.votes).sort((a,b) => data.votes[b] - data.votes[a]);
 
-    // Urutkan pemenang (terbanyak di atas)
-    const sortedCandidates = Object.keys(roleData.votes).sort((a,b) => roleData.votes[b] - roleData.votes[a]);
-
-    if (totalVotes === 0 && sortedCandidates.length === 0) {
-        container.innerHTML = "<p>Belum ada data.</p>";
+    if(total === 0 && sorted.length === 0) {
+        container.innerHTML = "<p style='text-align:center'>Belum ada suara masuk.</p>";
     } else {
-        sortedCandidates.forEach(name => {
-            const votes = roleData.votes[name];
-            const percent = totalVotes === 0 ? 0 : Math.round((votes / totalVotes) * 100);
-
-            const barItem = document.createElement('div');
-            barItem.className = 'bar-item';
-            barItem.innerHTML = `
+        sorted.forEach(name => {
+            const votes = data.votes[name];
+            const pct = total === 0 ? 0 : Math.round((votes/total)*100);
+            
+            const div = document.createElement('div');
+            div.className = "bar-item";
+            div.innerHTML = `
                 <div class="bar-label">
-                    <span>${name}</span>
-                    <span>${votes} Suara (${percent}%)</span>
+                    <span>${name}</span> 
+                    <span>${votes} Suara (${pct}%)</span>
                 </div>
                 <div class="bar-bg">
-                    <div class="bar-fill" style="width: ${percent}%"></div>
+                    <div class="bar-fill" style="width:${pct}%"></div>
                 </div>
             `;
-            container.appendChild(barItem);
+            container.appendChild(div);
         });
     }
-
+    
     goToScreen('screen-voting-result');
 }
 
 function resetVotingForRole() {
-    if (confirm(`Reset hasil suara untuk jabatan ${activeRole}? Kandidat tetap ada, suara jadi 0.`)) {
-        const candidates = appData.voting[activeRole].candidates;
-        candidates.forEach(name => {
-            appData.voting[activeRole].votes[name] = 0;
+    if(confirm(`Reset suara ${activeRole}?`)) {
+        appData.voting[activeRole].candidates.forEach(n => {
+            appData.voting[activeRole].votes[n] = 0;
         });
         saveSystemData();
-        showFinalResults(); // Refresh tampilan
+        showFinalResults();
+    }
+}
+
+function showCustomModal(title, msg, type, callback) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-message').innerText = msg;
+    const icon = document.getElementById('modal-icon-type');
+    
+    if(type === 'success') {
+        icon.style.background = '#55efc4';
+        icon.innerHTML = '<i class="fas fa-check"></i>';
+    } else if (type === 'error') {
+        icon.style.background = '#ff7675';
+        icon.innerHTML = '<i class="fas fa-times"></i>';
+    }
+    
+    onModalCloseCallback = callback;
+    
+    const modal = document.getElementById('custom-modal');
+    modal.style.zIndex = "99999999"; 
+    modal.classList.add('show');
+}
+
+function closeCustomModal() {
+    document.getElementById('custom-modal').classList.remove('show');
+    if(onModalCloseCallback) {
+        onModalCloseCallback();
+        onModalCloseCallback = null;
     }
 }
