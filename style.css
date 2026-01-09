@@ -337,7 +337,7 @@ button {
 
 .btn-danger-outline {
     background: white; border: 2px solid var(--danger); color: var(--danger);
-    padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; margin-top: 30px;
+    padding: 10px 20px; border-radius: 50px; font-size: 0.9rem;
 }
 
 .btn-wide {
