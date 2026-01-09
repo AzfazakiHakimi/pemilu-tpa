@@ -638,12 +638,25 @@ function adminResetData() {
 }
 
 function confirmResetSystem() {
+    const pass = prompt("Masukkan PIN Admin:");
+
+    if (pass === null) return;
+
+    if (pass !== "1234") {
+        alert("PIN salah!");
+        return;
+    }
+
+    // PIN BENAR → RESET DATA
+    localStorage.removeItem('tpa_election_v8_final');
+
+    // TAMPILKAN POPUP SUKSES
     showCustomModal(
-        "Konfirmasi Reset",
-        "Semua data (jabatan, santri, peminatan, dan voting) akan dihapus. Lanjutkan?",
-        "error",
+        "Berhasil",
+        "Semua data berhasil direset.",
+        "success",
         () => {
-            resetSystemData();
+            location.reload();
         }
     );
 }
