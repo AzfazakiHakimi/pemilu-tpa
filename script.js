@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadSystemData();
     initDataStructure();
-    
+    renderRoleList();
     renderPhase1RoleButtons();
     renderPhase2Dashboard();
 });
