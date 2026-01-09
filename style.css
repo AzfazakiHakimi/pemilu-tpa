@@ -340,6 +340,13 @@ button {
     padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; margin-top: 30px;
 }
 
+.btn-wide {
+    width: 100%;
+    padding: 14px 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
 .grid-roles {
     display: grid;
     grid-template-columns: 1fr 1fr;

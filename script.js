@@ -372,8 +372,7 @@ function resetPeminatan() {
         "Peminatan telah direset.",
         "success",
         () => {
-            goToScreen('screen-phase1-student-list');
-            renderStudentSelectList();
+            showPhase1Results();
         }
     );
 }
@@ -398,7 +397,10 @@ function renderPhase2Dashboard() {
 
     appData.roles.forEach(role => {
         const div = document.createElement('div');
-        const count = appData.voting[role]?.candidates.length || 0;
+        const count =
+            appData.voting[role].candidates.length > 0
+                ? appData.voting[role].candidates.length
+                : (appData.nominations[role]?.length || 0);
 
         div.innerHTML = `
             <span>${role}</span>
