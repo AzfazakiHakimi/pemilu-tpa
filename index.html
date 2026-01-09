@@ -258,7 +258,17 @@
         <div class="modal-icon-circle" id="modal-icon-type"></div>
         <h3 id="modal-title">Judul</h3>
         <p id="modal-message">Pesan...</p>
-        <button class="btn-modal" onclick="closeCustomModal()">OKE</button>
+
+        <!-- INPUT PIN (HANYA UNTUK KONFIRMASI) -->
+        <input type="password"
+           id="modal-pin-input"
+           placeholder="Masukkan PIN Admin"
+           style="display:none; margin-top:15px;" />
+
+    <!-- BUTTON AREA -->
+        <div id="modal-action-area">
+            <button class="btn-modal" onclick="closeCustomModal()">OKE</button>
+        </div>
     </div>
 </div>
 

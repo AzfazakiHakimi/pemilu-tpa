@@ -582,20 +582,22 @@ function showFinalResults() {
 }
 
 function resetVotingForRole() {
-    showCustomModal(
-        "Konfirmasi",
+    showConfirmResetModal(
+        "Reset Suara",
         `Reset seluruh suara untuk jabatan ${activeRole}?`,
-        "error",
         () => {
-            // reset semua suara
             appData.voting[activeRole].candidates.forEach(name => {
                 appData.voting[activeRole].votes[name] = 0;
             });
 
             saveSystemData();
-
-            // tetap di halaman hasil voting
             showFinalResults();
+
+            showCustomModal(
+                "Berhasil",
+                `Suara jabatan ${activeRole} berhasil direset.`,
+                "success"
+            );
         }
     );
 }
@@ -628,6 +630,49 @@ function closeCustomModal() {
     }
 }
 
+function showConfirmResetModal(title, message, onConfirm) {
+    document.getElementById('modal-title').innerText = title;
+    document.getElementById('modal-message').innerText = message;
+
+    const icon = document.getElementById('modal-icon-type');
+    icon.style.background = '#ff7675';
+    icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+
+    const pinInput = document.getElementById('modal-pin-input');
+    pinInput.value = "";
+    pinInput.style.display = "block";
+
+    const actionArea = document.getElementById('modal-action-area');
+    actionArea.innerHTML = `
+        <button class="btn-secondary-outline" onclick="closeCustomModal()">Batal</button>
+        <button class="btn-danger" onclick="confirmResetWithPin()">Reset</button>
+    `;
+
+    window._resetConfirmCallback = onConfirm;
+
+    document.getElementById('custom-modal').classList.add('show');
+}
+
+function confirmResetWithPin() {
+    const pin = document.getElementById('modal-pin-input').value;
+
+    if (pin !== "1234") {
+        showCustomModal(
+            "Gagal",
+            "PIN Admin salah.",
+            "error"
+        );
+        return;
+    }
+
+    closeCustomModal();
+
+    if (window._resetConfirmCallback) {
+        window._resetConfirmCallback();
+        window._resetConfirmCallback = null;
+    }
+}
+
 function adminResetData() {
     const pass = prompt("PIN Admin:");
     if (pass === "1234") {
@@ -638,25 +683,18 @@ function adminResetData() {
 }
 
 function confirmResetSystem() {
-    const pass = prompt("Masukkan PIN Admin:");
-
-    if (pass === null) return;
-
-    if (pass !== "1234") {
-        alert("PIN salah!");
-        return;
-    }
-
-    // PIN BENAR → RESET DATA
-    localStorage.removeItem('tpa_election_v8_final');
-
-    // TAMPILKAN POPUP SUKSES
-    showCustomModal(
-        "Berhasil",
-        "Semua data berhasil direset.",
-        "success",
+    showConfirmResetModal(
+        "Reset Data",
+        "Semua data akan dihapus. Lanjutkan?",
         () => {
-            location.reload();
+            localStorage.removeItem('tpa_election_v8_final');
+
+            showCustomModal(
+                "Berhasil",
+                "Semua data berhasil direset.",
+                "success",
+                () => location.reload()
+            );
         }
     );
 }
