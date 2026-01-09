@@ -274,8 +274,8 @@ function submitPhase1Choice(role) {
         `${student.name} telah memilih.`,
         "success",
         () => {
-            goToScreen('screen-phase1-students');
-            renderStudentList();
+            goToScreen('screen-phase1-student-list');
+            renderStudentSelectList();
         }
     );
 }
