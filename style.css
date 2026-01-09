@@ -467,36 +467,46 @@ button {
     position: absolute;
     inset: 0;
     z-index: 99999;
-
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 30px;
-
-    padding: 20px;
-    margin: 0 !important;
-    border-radius: 0;
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 24px 16px;
 }
 
 .booth-content {
-    background: transparent;
-    padding: 20px; 
-    border-radius: 30px;
-    width: 100%; 
+    background: #ffffff;
+    color: #2d3436;
+    padding: 20px;
+    border-radius: 24px;
+    margin-top: 16px;
+    width: 100%;
     max-width: 600px;
-    text-align: center; 
-    color: white;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    margin: 0 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid #eaeaea;
 }
 
-.booth-subtitle { margin: 0; font-size: 1.1rem; opacity: 0.9; }
+.booth-subtitle {
+    font-size: 0.95rem;
+    color: #636e72;
+    margin-bottom: 6px;
+}
+
+#judul-bilik-suara {
+    text-align: center;
+    width: 100%;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
 #booth-role-title {
     font-family: var(--font-heading); font-size: 2.5rem; margin: 5px 0 30px;
     text-shadow: 2px 2px 0 rgba(0,0,0,0.1); letter-spacing: 2px;
 }
+
 .role-highlight {
     color: var(--primary);
     font-weight: 600;
@@ -505,15 +515,36 @@ button {
 .voting-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 15px;
+    gap: 14px;
+    margin-top: 12px;
 }
+
 .vote-btn {
-    background: white; color: var(--text-dark); padding: 20px;
-    font-size: 1.3rem; border-radius: 15px;
-    box-shadow: 0 8px 0 #dfe6e9; font-family: var(--font-heading);
-    border: none; cursor: pointer;
+    width: 100%;
+    padding: 16px 18px;
+
+    background: #ffffff;
+    color: #2d3436;
+
+    border-radius: 16px;
+    border: 1px solid #e0e0e0;
+
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+
+    cursor: pointer;
+
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+
+    transition: 
+        transform 0.15s ease,
+        box-shadow 0.15s ease,
+        background 0.15s ease;
 }
+
 .vote-btn:active { transform: translateY(8px); box-shadow: none; background: #ffeaa7; }
+
 .btn-admin-lock {
     margin-top: 30px; background: rgba(0,0,0,0.1); color: rgba(255,255,255,0.7);
     padding: 8px 15px; border-radius: 20px; font-size: 0.8rem; border: none; cursor: pointer;
@@ -649,7 +680,7 @@ button {
 .screen.active.booth-mode > .btn-danger {
     width: 100%;
     max-width: 600px;
-    margin: 0 12px;
+    margin: 0 auto 16px auto;
 }
 
 .screen.active {
