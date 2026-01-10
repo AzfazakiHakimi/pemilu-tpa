@@ -35,19 +35,19 @@
                 <div class="menu-card color-purple" onclick="goToScreen('screen-role-manager')">
                     <div class="icon-circle"><i class="fas fa-briefcase"></i></div>
                     <h2>Jabatan</h2>
-                    <p>Atur jabatan pemilihan</p>
+                    <p>Atur pilihan jabatan</p>
                 </div>
 
                 <div class="menu-card color-teal" onclick="openPeminatan()">
                     <div class="icon-circle"><i class="fas fa-user-check"></i></div>
                     <h2>Peminatan</h2>
-                    <p>Santri memilih jabatan</p>
+                    <p>Pilih jabatan pribadi</p>
                 </div>
 
                 <div class="menu-card color-blue" onclick="goToScreen('screen-phase2-dashboard')">
                     <div class="icon-circle"><i class="fas fa-vote-yea"></i></div>
-                    <h2>Pemilihan</h2>
-                    <p>Voting kandidat final</p>
+                    <h2>Voting</h2>
+                    <p>Pemungutan Suara</p>
                 </div>
 
             </div>
@@ -88,10 +88,10 @@
             </button>
 
             <div class="content-box">
-                <h3>Daftar Santri</h3>
+                <h3>Daftar Pemilih</h3>
 
                 <div class="add-candidate-row">
-                    <input type="text" id="input-student-name" placeholder="Nama Santri">
+                    <input type="text" id="input-student-name" placeholder="Nama Pemilih">
                     <button class="btn-icon" onclick="addStudent()">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -122,7 +122,7 @@
                 <i class="fas fa-arrow-left"></i> Kembali
             </button>
 
-            <h3>Pilih Santri</h3>
+            <h3>Pemilih</h3>
 
             <ul id="list-students-select" class="candidate-ul"></ul>
 
@@ -181,11 +181,11 @@
 
             <div class="content-box">
                 <h3 class="box-title">
-                    Setup: <span id="judul-setup-jabatan" style="color:var(--primary)">...</span>
+                    Jabatan: <span id="judul-setup-jabatan" style="color:var(--primary)">...</span>
                 </h3>
 
                 <div class="add-candidate-row">
-                    <input type="text" id="input-candidate" placeholder="Nama Kandidat Final">
+                    <input type="text" id="input-candidate" placeholder="Nama Calon">
                     <button class="btn-icon" onclick="addCandidateAction()">
                         <i class="fas fa-plus"></i>
                     </button>

@@ -250,7 +250,7 @@ function showPhase1Results() {
 }
 
 function resetPeminatan() {
-    showConfirm("Reset Peminatan", "Calon dari hasil peminatan akan dihapus, tetapi calon manual tetap ada.", () => {
+    showConfirm("Reset Peminatan", "Semua peminat akan dihapus.", () => {
         appData.students.forEach(s => s.chosen = false);
         appData.roles.forEach(role => {
             const listPeminat = appData.nominations[role].map(siswa => siswa.nama); 
@@ -352,7 +352,7 @@ function renderCandidateList() {
     ul.innerHTML = "";
     const c = appData.voting[activeRole].candidates;
     if (!c.length) {
-        ul.innerHTML = "<li style='color:#999;justify-content:center'>Belum ada kandidat.</li>";
+        ul.innerHTML = "<li style='color:#999;justify-content:center'>Belum ada calon.</li>";
         return;
     }
     c.forEach((n, i) => {
@@ -461,10 +461,14 @@ function showFinalResults() {
 }
 
 function resetVotingForRole() {
-    showConfirm("Reset Suara", "Semua suara akan dihapus.", () => {
+    const pesanKonfirmasi = `Semua suara <span style="color: #00b894; font-weight: bold;">${activeRole}</span> akan dihapus.`;
+    const pesanSukses = `Suara <span style="color: #00b894; font-weight: bold;">${activeRole}</span> berhasil direset.`;
+
+    showConfirm("Reset Suara", pesanKonfirmasi, () => {
         appData.voting[activeRole].candidates.forEach(n => appData.voting[activeRole].votes[n] = 0);
         saveSystemData();
-        showModal("Berhasil", "Suara berhasil direset.", "success", showFinalResults);
+        
+        showModal("Berhasil", pesanSukses, "success", showFinalResults);
     });
 }
 
@@ -477,7 +481,7 @@ function confirmResetSystem() {
 
 function showModal(title, message, type, cb) {
     document.getElementById("modal-title").innerText = title;
-    document.getElementById("modal-message").innerText = message;
+    document.getElementById("modal-message").innerHTML = message;
 
     const i = document.getElementById("modal-icon-type");
     i.style.background = type === "success" ? "#55efc4" : "#ff7675";
@@ -496,7 +500,7 @@ function showModal(title, message, type, cb) {
 
 function showConfirm(title, message, onYes) {
     document.getElementById("modal-title").innerText = title;
-    document.getElementById("modal-message").innerText = message;
+    document.getElementById("modal-message").innerHTML = message;
     const i = document.getElementById("modal-icon-type");
     i.style.background = "#ff7675";
     i.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
