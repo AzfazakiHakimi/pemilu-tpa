@@ -28,6 +28,10 @@ function saveSystemData() {
 }
 
 function initDataStructure() {
+    if (!appData.nominations["Tidak Menjabat"]) {
+        appData.nominations["Tidak Menjabat"] = [];
+    }
+
     appData.roles.forEach(role => {
         if (!appData.nominations[role]) appData.nominations[role] = [];
         if (!appData.voting[role]) appData.voting[role] = { candidates: [], votes: {} };
@@ -37,7 +41,16 @@ function initDataStructure() {
 function goToScreen(id) {
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     document.getElementById(id).classList.add("active");
-    if (id === "screen-phase1-student-list") renderStudentSelectList();
+
+    if (id === "screen-phase1-student-list") {
+        renderStudentSelectList();
+    } 
+    else if (id === "screen-phase2-dashboard") {
+        renderPhase2Dashboard();
+    }
+    else if (id === "screen-phase1-results") {
+        renderPhase1Data();
+    }
 }
 
 function openPeminatan() {
@@ -125,9 +138,15 @@ function deleteStudent(i) {
     showConfirm("Hapus Santri", "Santri akan dihapus.", () => {
         const name = appData.students[i].name;
         appData.students.splice(i, 1);
+
         appData.roles.forEach(r => {
             appData.nominations[r] = appData.nominations[r].filter(n => n !== name);
         });
+
+        if (appData.nominations["Tidak Menjabat"]) {
+            appData.nominations["Tidak Menjabat"] = appData.nominations["Tidak Menjabat"].filter(n => n !== name);
+        }
+
         saveSystemData();
         renderStudentList();
         showModal("Berhasil", "Santri dihapus.", "success");
@@ -139,6 +158,9 @@ function startPeminatan() {
         showModal("Belum Bisa", "Tambahkan santri terlebih dahulu.", "error");
         return;
     }
+    
+    renderPhase2Dashboard();
+
     goToScreen("screen-phase1-student-list");
 }
 
@@ -175,41 +197,91 @@ function renderPhase1RoleButtons() {
 
 function submitPhase1Choice(role) {
     const s = appData.students[activeStudentIndex];
-    if (role !== "Tidak Menjabat") appData.nominations[role].push(s.name);
+    
+    if (role === "Tidak Menjabat") {
+        if (!appData.nominations["Tidak Menjabat"]) appData.nominations["Tidak Menjabat"] = [];
+        appData.nominations["Tidak Menjabat"].push(s.name);
+    } else {
+        appData.nominations[role].push(s.name);
+    }
+
     s.chosen = true;
     saveSystemData();
+
+    renderPhase2Dashboard(); 
+
     showModal("Tersimpan", `${s.name} telah memilih.`, "success", () => {
         goToScreen("screen-phase1-student-list");
         renderStudentSelectList();
     });
 }
 
-function showPhase1Results() {
+function renderPhase1Data() {
     const list = document.getElementById("list-results-p1");
     list.innerHTML = "";
 
-    const total = appData.roles.reduce((a, r) => a + appData.nominations[r].length, 0);
-    if (total === 0) {
-        list.innerHTML = "<div style='text-align:center;color:#999;padding:20px'>Belum ada peminat.</div>";
-        goToScreen("screen-phase1-results");
+    const noRoleArray = appData.nominations["Tidak Menjabat"] || [];
+    const hasData = appData.roles.some(r => (appData.nominations[r] && appData.nominations[r].length > 0)) || noRoleArray.length > 0;
+
+    if (!hasData) {
+        list.innerHTML = "<p style='text-align:center; color:#999;'>Belum ada data peminat.</p>";
         return;
     }
 
     appData.roles.forEach(r => {
-        const d = document.createElement("div");
-        d.innerHTML = `<strong>${r} (${appData.nominations[r].length})</strong><br><small>${appData.nominations[r].join(", ") || "-"}</small>`;
-        list.appendChild(d);
+        const names = appData.nominations[r] || [];
+        
+        if (names.length > 0) {
+            const div = document.createElement("div");
+            div.innerHTML = `
+                <strong style="display:block; font-size:1.1rem; margin-bottom:5px;">${r}</strong>
+                <span style="color:#555;">${names.join(", ")}</span>
+            `;
+            list.appendChild(div);
+        }
     });
 
+    if (noRoleArray.length > 0) {
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <strong style="display:block; font-size:1.1rem; margin-bottom:5px; color: #a29bfe;">Tidak Menjabat</strong>
+            <span style="color:#555;">${noRoleArray.join(", ")}</span>
+        `;
+        list.appendChild(div);
+    }
+}
+
+function showPhase1Results() {
     goToScreen("screen-phase1-results");
 }
 
 function resetPeminatan() {
-    showConfirm("Reset Peminatan", "Semua santri dapat memilih ulang.", () => {
+    showConfirm("Reset Peminatan", "Calon dari hasil peminatan akan dihapus, tetapi calon manual tetap ada.", () => {
         appData.students.forEach(s => s.chosen = false);
-        appData.roles.forEach(r => appData.nominations[r] = []);
+        appData.roles.forEach(role => {
+            const listPeminat = appData.nominations[role].map(siswa => siswa.nama); 
+
+            if (appData.voting[role] && appData.voting[role].candidates) {
+                appData.voting[role].candidates = appData.voting[role].candidates.filter(kandidat => {
+                    const namaKandidat = (typeof kandidat === 'object') ? kandidat.nama : kandidat;
+                    
+                    return !listPeminat.includes(namaKandidat);
+                });
+            }
+
+            appData.nominations[role] = [];
+        });
+        
+        appData.nominations["Tidak Menjabat"] = [];
+        
         saveSystemData();
-        showModal("Berhasil", "Peminatan direset.", "success", showPhase1Results);
+        renderPhase2Dashboard(); 
+
+        if(typeof renderPhase1Data === 'function') {
+            renderPhase1Data(); 
+        }
+
+        showModal("Berhasil", "Peminatan direset.", "success");
     });
 }
 
@@ -223,9 +295,23 @@ function renderPhase2Dashboard() {
     }
 
     appData.roles.forEach(r => {
-        const count = appData.voting[r].candidates.length || appData.nominations[r].length;
+        const officialCandidates = appData.voting[r].candidates.length;
+        const potentialCandidates = appData.nominations[r] ? appData.nominations[r].length : 0;
+        const count = officialCandidates > 0 ? officialCandidates : potentialCandidates;
+        const badgeColor = count > 0 ? "#55efc4" : "#dfe6e9"; 
         const d = document.createElement("div");
-        d.innerHTML = `<span>${r}</span><span style="background:#dfe6e9;padding:5px 10px;border-radius:10px;font-size:.8rem">${count} Calon</span>`;
+        const textColor = count > 0 ? "#2d3436" : "#636e72";
+
+        d.innerHTML = `
+            <span>${r}</span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="background:${badgeColor}; padding:5px 12px; border-radius:15px; font-size:.75rem; font-weight:bold; color:${textColor};">
+                    ${count} calon
+                </span>
+                <i class="fas fa-chevron-right" style="color:#b2bec3"></i>
+            </div>
+        `;
+        
         d.onclick = () => setupVotingScreen(r);
         list.appendChild(d);
     });
@@ -254,7 +340,7 @@ function addCandidateAction() {
     const candidates = appData.voting[activeRole].candidates;
 
     if (candidates.includes(name)) {
-        showModal("Duplikat", "Nama kandidat sudah ada.", "error");
+        showModal("Duplikat", "Nama calon sudah ada.", "error");
         return;
     }
 
@@ -292,10 +378,17 @@ function deleteCandidate(i) {
 }
 
 function startVotingSession() {
-    if (!appData.voting[activeRole].candidates.length) {
-        showModal("Ups", "Minimal 1 kandidat.", "error");
+    const count = appData.voting[activeRole].candidates.length;
+
+    if (count < 2) {
+        showModal(
+            "Kurang Calon", 
+            "Minimal harus ada 2 caloh untuk memulai pemilihan.", 
+            "error"
+        );
         return;
     }
+
     document.getElementById("judul-bilik-suara").innerText = activeRole.toUpperCase();
     renderVotingButtons();
     goToScreen("screen-voting-booth");
@@ -337,7 +430,7 @@ function adminExitVoting() {
         () => {
             showModal(
                 "Pemilihan Selesai",
-                "Sesi pemilihan telah diakhiri.",
+                "Sesi pemilihan telah berakhir.",
                 "success",
                 () => {
                     goToScreen("screen-voting-result");

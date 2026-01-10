@@ -555,28 +555,6 @@ button {
 
 .btn-danger i { margin-right: 8px; }
 
-#modal-pin-input {
-    width: 100%;
-    padding: 14px 16px;
-    margin-top: 18px;
-
-    font-size: 1rem;
-    font-family: var(--font-body);
-    text-align: center;
-
-    border-radius: 14px;
-    border: 2px solid #dfe6e9;
-    outline: none;
-
-    transition: 0.25s ease;
-    box-sizing: border-box;
-}
-
-#modal-pin-input:focus {
-    border-color: var(--danger);
-    box-shadow: 0 0 0 4px rgba(255, 118, 117, 0.15);
-}
-
 #modal-action-area {
     display: flex;
     gap: 12px;
