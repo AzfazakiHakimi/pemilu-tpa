@@ -161,31 +161,6 @@ header.compact {
 .color-teal { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
 .color-blue { background: linear-gradient(135deg, #54a0ff, #2e86de); }
 
-.content-box h3 {
-    font-family: var(--font-heading);
-    font-size: 1.3rem;
-    margin-bottom: 20px;
-    color: var(--text-dark);
-    letter-spacing: 1px;
-}
-
-#input-role-name {
-    width: 100%;
-    padding: 14px;
-    font-size: 1rem;
-    border: 2px solid #dfe6e9;
-    border-radius: 14px;
-    text-align: center;
-    font-family: var(--font-body);
-    outline: none;
-    transition: 0.3s;
-}
-
-#input-role-name:focus {
-    border-color: var(--secondary);
-    box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
-}
-
 #list-roles {
     list-style: none;
     padding: 0;
@@ -277,6 +252,14 @@ header.compact {
     max-width: 100%;
 }
 
+.content-box h3 {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    letter-spacing: 1px;
+}
+
 .illustration {
     font-size: 3rem; color: var(--secondary); margin-bottom: 15px;
 }
@@ -287,23 +270,24 @@ input[type="text"] {
     width: 100%;
     padding: 18px;
     font-size: 1.1rem;
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid transparent;
-    border-radius: 20px;
+    background: #f8f9fa; 
+    border: 2px solid #dfe6e9; 
+    border-radius: 18px;
     text-align: center;
     font-family: var(--font-body);
     font-weight: 600;
-    color: var(--secondary);
+    color: var(--text-dark);
     outline: none;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    transition: 0.3s ease;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+    transition: all 0.3s ease;
 }
 
 input[type="text"]:focus {
-    background: #fff;
+    background: #ffffff;
     border-color: var(--secondary);
-    box-shadow: 0 0 0 5px rgba(108, 92, 231, 0.15);
-    transform: scale(1.02);
+    color: var(--secondary);
+    box-shadow: 0 5px 15px rgba(108, 92, 231, 0.2);
+    transform: translateY(-2px);
 }
 
 button {
@@ -389,7 +373,12 @@ button {
     flex-direction: column;
 }
 
-.add-candidate-row { display: flex; gap: 10px; margin-bottom: 20px; }
+.add-candidate-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
 .btn-icon { width: 50px; border-radius: 12px; background: var(--accent); color: white; font-size: 1.2rem; }
 .btn-play {
     display: flex;
