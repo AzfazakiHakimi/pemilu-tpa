@@ -94,17 +94,14 @@ function renderRoleList() {
 }
 
 function deleteRole(i) {
-    showConfirm("Hapus Jabatan", "Jabatan akan dihapus.", () => {
-        const role = appData.roles[i];
-        appData.roles.splice(i, 1);
-        delete appData.nominations[role];
-        delete appData.voting[role];
-        saveSystemData();
-        renderRoleList();
-        renderPhase1RoleButtons();
-        renderPhase2Dashboard();
-        showModal("Berhasil", "Jabatan dihapus.", "success");
-    });
+    const role = appData.roles[i];
+    appData.roles.splice(i, 1);
+    delete appData.nominations[role];
+    delete appData.voting[role];
+    saveSystemData();
+    renderRoleList();
+    renderPhase1RoleButtons();
+    renderPhase2Dashboard();
 }
 
 function addStudent() {
@@ -135,22 +132,19 @@ function renderStudentList() {
 }
 
 function deleteStudent(i) {
-    showConfirm("Hapus Santri", "Santri akan dihapus.", () => {
-        const name = appData.students[i].name;
-        appData.students.splice(i, 1);
+    const name = appData.students[i].name;
+    appData.students.splice(i, 1);
 
-        appData.roles.forEach(r => {
-            appData.nominations[r] = appData.nominations[r].filter(n => n !== name);
-        });
-
-        if (appData.nominations["Tidak Menjabat"]) {
-            appData.nominations["Tidak Menjabat"] = appData.nominations["Tidak Menjabat"].filter(n => n !== name);
-        }
-
-        saveSystemData();
-        renderStudentList();
-        showModal("Berhasil", "Santri dihapus.", "success");
+    appData.roles.forEach(r => {
+        appData.nominations[r] = appData.nominations[r].filter(n => n !== name);
     });
+
+    if (appData.nominations["Tidak Menjabat"]) {
+        appData.nominations["Tidak Menjabat"] = appData.nominations["Tidak Menjabat"].filter(n => n !== name);
+    }
+
+    saveSystemData();
+    renderStudentList();
 }
 
 function startPeminatan() {
