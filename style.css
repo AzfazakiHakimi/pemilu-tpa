@@ -373,6 +373,33 @@ button {
     flex-direction: column;
 }
 
+.candidate-scroll-box {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.candidate-scroll-box::-webkit-scrollbar {
+    width: 6px;
+}
+.candidate-scroll-box::-webkit-scrollbar-track {
+    background: transparent;
+}
+.candidate-scroll-box::-webkit-scrollbar-thumb {
+    background-color: #bdc3c7;
+    border-radius: 20px;
+}
+
+.candidate-scroll-box .candidate-ul {
+    margin: 0;
+    padding: 0;
+}
+
 .add-candidate-row {
     display: flex;
     gap: 10px;
