@@ -133,6 +133,7 @@ function renderStudentList() {
 
 function deleteStudent(i) {
     const name = appData.students[i].name;
+    
     appData.students.splice(i, 1);
 
     appData.roles.forEach(r => {
@@ -145,6 +146,10 @@ function deleteStudent(i) {
 
     saveSystemData();
     renderStudentList();
+    
+    if (typeof renderPhase1Data === 'function') {
+        renderPhase1Data();
+    }
 }
 
 function startPeminatan() {
@@ -363,9 +368,32 @@ function renderCandidateList() {
 }
 
 function deleteCandidate(i) {
-    const name = appData.voting[activeRole].candidates[i];
-    appData.voting[activeRole].candidates.splice(i, 1);
-    delete appData.voting[activeRole].votes[name];
+    const role = activeRole;
+    const nameToDelete = appData.voting[role].candidates[i];
+    const rawNominations = appData.nominations[role] || [];
+
+    const listPeminat = rawNominations.map(item => {
+        if (typeof item === 'object' && item !== null) {
+            return item.name || item.nama; 
+        }
+        return item;
+    });
+
+    if (listPeminat.includes(nameToDelete)) {
+        showModal(
+            "Gagal Menghapus", 
+            `Hapus nama dari menu <b>Peminatan</b> terlebih dahulu.`, 
+            "error"
+        );
+        return;
+    }
+
+    appData.voting[role].candidates.splice(i, 1);
+        
+    if (appData.voting[role].votes && appData.voting[role].votes[nameToDelete]) {
+        delete appData.voting[role].votes[nameToDelete];
+    }
+
     saveSystemData();
     renderCandidateList();
     renderPhase2Dashboard();
