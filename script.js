@@ -197,19 +197,35 @@ function renderPhase1RoleButtons() {
 function submitPhase1Choice(role) {
     const s = appData.students[activeStudentIndex];
     
+    // Hapus pilihan lama dia (jika ada) dari semua jabatan di Fase 1
+    // Ini memastikan satu santri hanya punya satu minat dalam satu waktu
+    appData.roles.forEach(r => {
+        if (appData.nominations[r]) {
+            appData.nominations[r] = appData.nominations[r].filter(n => n !== s.name);
+        }
+    });
+    // Hapus juga dari list 'Tidak Menjabat'
+    if (appData.nominations["Tidak Menjabat"]) {
+        appData.nominations["Tidak Menjabat"] = appData.nominations["Tidak Menjabat"].filter(n => n !== s.name);
+    }
+
+    // Masukkan ke pilihan baru
     if (role === "Tidak Menjabat") {
         if (!appData.nominations["Tidak Menjabat"]) appData.nominations["Tidak Menjabat"] = [];
         appData.nominations["Tidak Menjabat"].push(s.name);
     } else {
+        if (!appData.nominations[role]) appData.nominations[role] = [];
         appData.nominations[role].push(s.name);
     }
 
+    // Tandai sudah memilih
     s.chosen = true;
+    
+    // Simpan
     saveSystemData();
+    renderPhase2Dashboard(); // Update angka badge di dashboard, tapi TIDAK mengubah isi kandidat
 
-    renderPhase2Dashboard(); 
-
-    showModal("Tersimpan", `${s.name} telah memilih.`, "success", () => {
+    showModal("Tersimpan", `${s.name} memilih: <b>${role}</b>`, "success", () => {
         goToScreen("screen-phase1-student-list");
         renderStudentSelectList();
     });
@@ -369,28 +385,36 @@ function renderCandidateList() {
 
 function deleteCandidate(i) {
     const role = activeRole;
+    // Mengambil nama kandidat yang akan dihapus
     const nameToDelete = appData.voting[role].candidates[i];
+    
+    // Cek Data Peminatan (Fase 1)
     const rawNominations = appData.nominations[role] || [];
-
+    
+    // Normalisasi data peminatan (jaga-jaga jika formatnya object atau string)
     const listPeminat = rawNominations.map(item => {
-        if (typeof item === 'object' && item !== null) {
-            return item.name || item.nama; 
-        }
-        return item;
+        return (typeof item === 'object' && item !== null) ? (item.name || item.nama) : item;
     });
 
+    // LOGIKA PENGAMAN:
+    // Jika nama masih ada di Peminatan, tolak penghapusan di Pemilihan.
+    // Ini memaksa Admin untuk membereskan Fase 1 dulu baru Fase 2.
     if (listPeminat.includes(nameToDelete)) {
         showModal(
             "Gagal Menghapus", 
-            `Hapus nama dari menu <b>Peminatan</b> terlebih dahulu.`, 
+            `Nama <b>${nameToDelete}</b> masih tercatat di menu Peminatan.<br>Hapus dari Peminatan dulu sebelum menghapus dari sini.`, 
             "error"
         );
         return;
     }
 
+    // EKSEKUSI PENGHAPUSAN:
+    // 1. Hapus dari daftar visual kandidat
     appData.voting[role].candidates.splice(i, 1);
         
-    if (appData.voting[role].votes && appData.voting[role].votes[nameToDelete]) {
+    // 2. [KRUSIAL] Hapus data suaranya dari memori
+    // Menggunakan delete operator agar key-nya benar-benar hilang dari object votes
+    if (appData.voting[role].votes && Object.prototype.hasOwnProperty.call(appData.voting[role].votes, nameToDelete)) {
         delete appData.voting[role].votes[nameToDelete];
     }
 
